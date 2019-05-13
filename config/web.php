@@ -6,15 +6,25 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
+    'language' => 'ru',
     'bootstrap' => ['log'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
     'components' => [
+        'formatter' => [
+            'dateFormat' => 'Y-MM-dd',
+            'timeFormat' => 'HH:mm:ss',
+        ],
+        'urlManager' => [
+                'enablePrettyUrl' => false,
+                'showScriptName' => false,
+                'enableStrictParsing' => false,
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'SAo0EAhUmnZ6ZcRKvkwfFPUMLknxt_Lr',
+            'cookieValidationKey' => '-V2tqDIgWN4iQ0_Q7poua_XHQSa1BIKh',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -43,14 +53,21 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
+        'i18n' => [
+            'translations' => [
+                'app*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@app/messages',
+                    'fileMap' => [
+                        'app' => 'main.php',
+                    ],
+                ],
             ],
         ],
-        */
+        'contentNegotiator' => [
+            'class' => 'yii\filters\ContentNegotiator',
+            'languages' => ['en', 'ru'],
+        ],
     ],
     'params' => $params,
 ];
