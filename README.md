@@ -27,9 +27,20 @@ You can then install this project template using the following command:
 composer install
 ~~~
 
-Now you should be able to access the application through the following URL, assuming `basic` is the directory
+### DB Connection
+
+rename test_db.php -> db.php
+
+### Run database migration
+
+~~~
+yii migrate
+~~~
+
+Now you should be able to access the application through the following URL, assuming `sommerce` is the directory
 directly under the Web root.
 
 ~~~
 http://localhost/sommerce/web/
 ~~~
+
