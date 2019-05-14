@@ -17,11 +17,7 @@ $config = [
             'dateFormat' => 'Y-MM-dd',
             'timeFormat' => 'HH:mm:ss',
         ],
-        'urlManager' => [
-                'enablePrettyUrl' => false,
-                'showScriptName' => false,
-                'enableStrictParsing' => false,
-        ],
+
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => '-V2tqDIgWN4iQ0_Q7poua_XHQSa1BIKh',
@@ -29,10 +25,7 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
-        'user' => [
-            'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
-        ],
+
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],

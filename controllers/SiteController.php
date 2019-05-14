@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\services\PageCounterService;
 use yii\web\Controller;
 use app\models\Orders;
 use Yii;
@@ -27,225 +28,69 @@ class SiteController extends Controller
         }
         Yii::$app->language = $session->get('lang');
 
-        //Получаем запрос из формы поиска
-        $searchParams = Yii::$app->request->get();
-        if (isset($searchParams['searchValue'])) {
-            $searchParams['Orders'] = [
-                $searchParams['searchColumn'] => $searchParams['searchValue']
-            ];
-        }
+        $orders = new Orders();
 
-        $searchModel = new Orders();
-
-        $dataProvider = $searchModel->search($searchParams);
+        //Передаем значения фильтров, и получаем отфильтрованый провайдер по 100 записей на страницу.
+        $dataProvider = $orders->getDataProvider(Yii::$app->request->get());
         $dataProvider->setPagination(['pageSize' => 100]);
         $dataProvider->setSort(['defaultOrder' => ['id' => SORT_DESC]]);
 
+        //Получаем модель данных с учетом пагинации.
         $orderModel = $dataProvider->getModels();
 
-        $uniqueServices = [];
-        /** @var Orders $order */
-        foreach ($orderModel as $order) {
-            if (isset($uniqueServices[$order->services->id])) {
-                $uniqueServices[$order->services->id]++;
-            } else {
-                $uniqueServices[$order->services->id] = 1;
-            }
-        }
-
-        $serviceCount = $searchModel->getUniqueServiceCountList();
-        $serviceTotal = $searchModel->getCount();
+        //Получаем общее количество заказов по каждому сервису
+        $serviceCount = $orders->getUniqueServiceCountList();
+        $serviceTotal = (new Orders())->getTotalCount();
         foreach ($serviceTotal as $key => $value) {
             $serviceTotal = ($value['serviceCount']);
         }
 
         //Получаем таблицы Статус и Мод из модели
-        $status = $searchModel->getStatusTable();
-        $mode = $searchModel->getModeTable();
+        $status = $orders->getStatusTable();
+        $mode = $orders->getModeTable();
+
+        //Количество заказов по каждому сервису для данной выборки
+        $uniqueServices = $this->countUniqueService($orderModel);
 
         //Получаем значения фильтров
         $statusID = yii::$app->request->get('statusID');
         $serviceID = yii::$app->request->get('serviceID');
         $modeID = yii::$app->request->get('modeID');
 
+        //Получаем PageCounter
+        $pageCounter = (new PageCounterService())->createCounter($dataProvider);
+
         return $this->render('index', [
                 'dataProvider' => $dataProvider,
-                'searchModel' => $searchModel,
                 'status' => $status,
                 'statusID' => $statusID,
                 'serviceID' => $serviceID,
                 'modeID' => $modeID,
                 'orderModel' => $orderModel,
                 'serviceCount' => $serviceCount,
-                'mode' => $mode,
                 'serviceTotal' => $serviceTotal,
-                'uniqueServices' => $uniqueServices
+                'mode' => $mode,
+                'uniqueServices' => $uniqueServices,
+                'pageCounter' => $pageCounter
             ]
         );
     }
 
+    /**
+     * @param array $model
+     * @return array
+     */
+    protected function countUniqueService(array $model): array
+    {
+        $uniqueServices = [];
 
+        foreach ($model as $order) {
+            if (isset($uniqueServices[$order->services->id])) {
+                $uniqueServices[$order->services->id]++;
+            } else {
+                $uniqueServices[$order->services->id] = 1;
+            }
+        }
+        return $uniqueServices;
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//namespace app\controllers;
-//
-//use Yii;
-//use yii\filters\AccessControl;
-//use yii\web\Controller;
-//use yii\web\Response;
-//use yii\filters\VerbFilter;
-//use app\models\LoginForm;
-//use app\models\ContactForm;
-//use app\models\EntryForm;
-//
-//class SiteController extends Controller
-//{
-//    /**
-//     * {@inheritdoc}
-//     */
-//    public function behaviors()
-//    {
-//        return [
-//            'access' => [
-//                'class' => AccessControl::className(),
-//                'only' => ['logout'],
-//                'rules' => [
-//                    [
-//                        'actions' => ['logout'],
-//                        'allow' => true,
-//                        'roles' => ['@'],
-//                    ],
-//                ],
-//            ],
-//            'verbs' => [
-//                'class' => VerbFilter::className(),
-//                'actions' => [
-//                    'logout' => ['post'],
-//                ],
-//            ],
-//        ];
-//    }
-//
-//    /**
-//     * {@inheritdoc}
-//     */
-//    public function actions()
-//    {
-//        return [
-//            'error' => [
-//                'class' => 'yii\web\ErrorAction',
-//            ],
-//            'captcha' => [
-//                'class' => 'yii\captcha\CaptchaAction',
-//                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-//            ],
-//        ];
-//    }
-//
-//    /**
-//     * Displays homepage.
-//     *
-//     * @return string
-//     */
-//    public function actionIndex()
-//    {
-//        return $this->render('index');
-//    }
-//
-//    /**
-//     * Login action.
-//     *
-//     * @return Response|string
-//     */
-//    public function actionLogin()
-//    {
-//        if (!Yii::$app->user->isGuest) {
-//            return $this->goHome();
-//        }
-//
-//        $model = new LoginForm();
-//        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-//            return $this->goBack();
-//        }
-//
-//        $model->password = '';
-//        return $this->render('login', [
-//            'model' => $model,
-//        ]);
-//    }
-//
-//    /**
-//     * Logout action.
-//     *
-//     * @return Response
-//     */
-//    public function actionLogout()
-//    {
-//        Yii::$app->user->logout();
-//
-//        return $this->goHome();
-//    }
-//
-//    /**
-//     * Displays contact page.
-//     *
-//     * @return Response|string
-//     */
-//    public function actionContact()
-//    {
-//        $model = new ContactForm();
-//        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-//            Yii::$app->session->setFlash('contactFormSubmitted');
-//
-//            return $this->refresh();
-//        }
-//        return $this->render('contact', [
-//            'model' => $model,
-//        ]);
-//    }
-//
-//    /**
-//     * Displays about page.
-//     *
-//     * @return string
-//     */
-//    public function actionAbout()
-//    {
-//        return $this->render('about');
-//    }
-//
-//    public function actionSay($message = 'Привет')
-//    {
-//        return $this->render('say', ['message' => $message]);
-//    }
-//
-//    public function actionEntry()
-//    {
-//        $model = new EntryForm();
-//
-//        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-//            // данные в $model удачно проверены
-//
-//            // делаем что-то полезное с $model ...
-//
-//            return $this->render('entry-confirm', ['model' => $model]);
-//        } else {
-//            // либо страница отображается первый раз, либо есть ошибка в данных
-//            return $this->render('entry', ['model' => $model]);
-//        }
-//    }
-//}

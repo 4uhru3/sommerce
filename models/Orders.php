@@ -4,7 +4,6 @@ namespace app\models;
 
 use yii\db\ActiveRecord;
 use yii\data\ActiveDataProvider;
-use yii\base\Model;
 use Yii;
 use yii\db\ActiveQuery;
 
@@ -60,7 +59,7 @@ class Orders extends ActiveRecord
      * @return array
      * @throws \yii\db\Exception
      */
-    public function getCount(): array
+    public function getTotalCount(): array
     {
         return $this::find()
             ->select(['count(*) as serviceCount'])
@@ -85,64 +84,38 @@ class Orders extends ActiveRecord
     }
 
     /**
-     * @return array
-     */
-    public function rules(): array
-    {
-        // только поля определенные в rules() будут доступны для поиска
-        return [
-              [['id'], 'integer'],
-              [['user'], 'string'],
-              [['link'], 'string'],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function scenarios(): array
-    {
-        // bypass scenarios() implementation in the parent class
-        return Model::scenarios();
-    }
-
-    /**
-     * @param $params
+     * @param array $params
      * @return ActiveDataProvider
      */
-    public function search($params): ActiveDataProvider
+    public function getDataProvider(array $params): ActiveDataProvider
     {
         $modeID = isset($params['modeID']) ? $params['modeID'] : null;
         $serviceID = isset($params['serviceID']) ? $params['serviceID'] : null;
         $statusID = isset($params['statusID']) ? $params['statusID'] : null;
+        $searchColumn = isset($params['searchColumn']) ? $params['searchColumn'] : null;
+        $searchValue = isset($params['searchValue']) ? $params['searchValue'] : null;
 
         $query = Orders::find();
 
+        if ($searchColumn & $searchValue) {
+            $query->andFilterWhere([$searchColumn => $searchValue]);
+        }
+
         if ($serviceID) {
-            $query->andWhere(['service_id' => $serviceID]);
+            $query->andFilterWhere(['service_id' => $serviceID]);
         }
 
         if ($statusID) {
-            $query->andWhere(['status_id' => $statusID]);
+            $query->andFilterWhere(['status_id' => $statusID]);
         }
 
         if ($modeID) {
-            $query->andWhere(['mode_id' => $modeID]);
+            $query->andFilterWhere(['mode_id' => $modeID]);
         }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
-        // загружаем данные формы поиска и производим валидацию
-        if (!($this->load($params) && $this->validate())) {
-            return $dataProvider;
-        };
-
-        // изменяем запрос добавляя в его фильтрацию
-        $query->andFilterWhere(['id' => $this->id]);
-        $query->andFilterWhere(['link' => $this->link]);
-        $query->andFilterWhere(['user' => $this->user]);
 
         return $dataProvider;
     }

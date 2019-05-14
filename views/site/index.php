@@ -2,65 +2,33 @@
 
 /* @var $this yii\web\View */
 
-$this->title = 'Order List "Sommers"';
+$this->title = 'Order List "Sommerce"';
 
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
-
-$sum_page = $dataProvider->pagination->page;
-$sum_limit = $dataProvider->pagination->limit;
-$sum_offset = $dataProvider->pagination->offset;
-$sum_total = $dataProvider->totalCount;
-$sum_count = $dataProvider->count;
 ?>
 
 <div class="container-fluid">
-    <ul class="nav nav-tabs p-b">
-        <li class="<?php if ($statusID == null) {
-            echo('active');
-        }; ?>">
-            <a href="<?= URL::to(['index', 'statusID' => null]) ?>">
-                <?= Yii::t('app', 'All orders') ?>
-            </a>
-        </li>
-        <?php
-        foreach ($status as $key => $value) {
-            if ($statusID == $value['id']) {
-                $cssClass = 'active';
-            } else $cssClass = null;
-            echo Html::beginTag('li', ['class' => $cssClass]);
-            echo(html::a(Yii::t('app', $value['name']),
-                url::to(['index', 'statusID' => $value['id']])));
-            echo "</li>";
-        } ?>
+    <!--  Частичное представление нав-панели  -->
+    <?= $this->render('_navigation', ['status' => $status, 'statusID' => $statusID]) ?>
+    <!--  Ссылка на экспорт в CSV  -->
+    <ul class="p-b nav">
         <li class="pull-right custom-search">
-            <?= $this->render(
-                '_search',
-                [
-                    'model' => $searchModel,
-                    'statusID' => $statusID,
-
-                ]) ?>
+            <?= Html::a(
+                    Yii::t('app', 'Export'),
+                    Url::to([
+                        'export/export',
+                        'modeID' => $modeID,
+                        'serviceID' => $serviceID,
+                        'statusID' => $statusID,
+                        'searchColumn' => Yii::$app->request->get('searchColumn'),
+                        'searchValue' => Yii::$app->request->get('searchValue')
+                    ])
+                )?>
         </li>
     </ul>
-    <!-- Вывод количества записей-->
-
-    <span><?= $summary = $sum_page * $sum_limit + 1; ?>
-    </span><?= Yii::t('app', 'to') ?>
-    <span>
-    <?php if (($sum_offset + $sum_limit) < $sum_total) {
-        echo $summary = ($sum_offset + $sum_limit);
-    } else {
-        echo $sum_total;
-    }
-    ?>
-    </span>
-    <?= Yii::t('app', 'of') ?>
-    <span>
-      <?= $sum_total ?>
-    </span>
-
+    <!--  Начало таблицы  -->
     <table class="table order-table">
         <thead>
         <tr>
@@ -76,18 +44,29 @@ $sum_count = $dataProvider->count;
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li class="active"><?php echo(html::a(
-                                'All ' . $serviceTotal, url::to([
-                                'index', 'serviceID' => null, 'modeID' => $modeID, 'statusID' => $statusID]))); ?>
+                        <li class="active">
+                            <?= Html::a('All ' . $serviceTotal,
+                                    Url::to([
+                                        'index',
+                                        'serviceID' => null,
+                                        'modeID' => $modeID,
+                                        'statusID' => $statusID])
+                            )?>
                         </li>
                         <?php
-                        foreach ($serviceCount as $service) {
-                            echo '<li>';
-                            echo html::a(
-                                '<span class="label-id">' . $service['cnt'] . '</span>' . Yii::t('app', $service['name']),
-                                url::to(['index', 'serviceID' => $service['id'],
-                                    'modeID' => $modeID, 'statusID' => $statusID]));
-                            echo '</li>';
+                        foreach ($serviceCount as $service)
+                        {
+                            echo Html::tag('li',
+                                    Html::a(
+                                            Html::tag('span',
+                                                $service['cnt'] . Yii::t('app', $service['name']),
+                                                ['class' => 'label-id']),
+                                            Url::to(['index',
+                                                'serviceID' => $service['id'],
+                                                'modeID' => $modeID,
+                                                'statusID' => $statusID])
+                                            )
+                                        );
                         }
                         ?>
                     </ul>
@@ -103,7 +82,7 @@ $sum_count = $dataProvider->count;
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                         <li class="active">
-                            <a href="<?= URL::to(
+                            <a href="<?= Url::to(
                                 [
                                     'index',
                                     'modeID' => null,
@@ -117,8 +96,8 @@ $sum_count = $dataProvider->count;
                         <?php
                         foreach ($mode as $value) {
                             echo '<li>';
-                            echo HTML::a(Yii::t('app', $value['name']),
-                                URL::to([
+                            echo Html::a(Yii::t('app', $value['name']),
+                                Url::to([
                                     'index',
                                     'modeID' => $value['id'],
                                     'serviceID' => $serviceID,
@@ -141,15 +120,13 @@ $sum_count = $dataProvider->count;
             echo '<tr>';
             echo('<td>' . $model->id . '</td>');
             echo('<td>' . $model->user . '</td>');
-            echo('<td>' . html::a($model->link, $model->link) . '</td>');
+            echo('<td>' . Html::a($model->link, $model->link) . '</td>');
             echo('<td>' . $model->quantity . '</td>');
-            echo('<td>
-                    <span class="label-id">' . $uniqueServices[$model->services->id] . '</span> ' . $model->services->name . '
-                  </td>');
+            echo('<td><span class="label-id">' . $uniqueServices[$model->services->id] .
+                '</span> ' . $model->services->name . '</td>');
             echo('<td>' . $model->status->name . '</td>');
             echo('<td>' . $model->mode->name . '</td>');
-            echo('<td><span class="nowrap">' .
-                    Yii::$app->formatter->asDate($model->created_at) .
+            echo('<td><span class="nowrap">' . Yii::$app->formatter->asDate($model->created_at) .
                 '</span><span class="nowrap">' . Yii::$app->formatter->asTime($model->created_at) .
                 '</span></td>');
             echo '</tr>';
@@ -157,24 +134,14 @@ $sum_count = $dataProvider->count;
         ?>
         </tbody>
     </table>
-    <ul>
-        <li class="pull-right custom-search">
+    <!--  Окончание таблицы  -->
+    <ul class="nav nav-tabs p-b">
+        <li>
             <?= LinkPager::widget(['pagination' => $dataProvider->pagination]) ?>
         </li>
-        <li class="pull-right custom-search">
-            <?=
-            HTML::a(
-                Yii::t('app', 'Export'),
-                url::to([
-                    'export/export',
-                    'modeID' => $modeID,
-                    'serviceID' => $serviceID,
-                    'statusID' => $statusID,
-                    'Orders' => Yii::$app->request->get('Orders'),
-                    'searchType' => Yii::$app->request->get('searchType'),
-                ])
-            ) ?>
+        <li class="pull-right">
+            <!-- Выводим количество записей-->
+            <?=$pageCounter?>
         </li>
     </ul>
 </div>
-

@@ -17,9 +17,7 @@ class ExportController extends Controller
      */
     public function actionExport()
     {
-        $searchModel = new Orders();
-
-        $dataProvider = $searchModel->search(Yii::$app->request->get());
+        $dataProvider = (new Orders())->getDataProvider(Yii::$app->request->get());
         $dataProvider->setPagination([
             'pageSize' => $dataProvider->query->count(),
         ]);
@@ -37,10 +35,10 @@ class ExportController extends Controller
                 ';' . date('Y-m-d H:i:s', $value->created_at).
                 "\r\n";
         }
+
         header('Content-type: text/csv');
         header('Content-Disposition: attachment; filename="export_' . date('d.m.Y') . '.csv"');
 
-        echo $data;
-        die;
+        return $data;
     }
 }
