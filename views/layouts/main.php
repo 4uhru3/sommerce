@@ -31,37 +31,6 @@ $this->beginPage();
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-<body>
-<?php $this->beginBody() ?>
-<header>
-    <nav class="navbar navbar-fixed-top navbar-default">
-        <nav class="navbar navbar-fixed-top navbar-default">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                            data-target="#bs-navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                </div>
-                <div class="collapse navbar-collapse" id="bs-navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        <li class="active"><a href="<?= URL::to(['index']) ?>">Orders</a></li>
-                        <li class="<?php if ($session->get('lang') == 'ru') {
-                            echo('active');
-                        } ?>"><a href="<?= URL::to(['index', 'lang' => 'ru']) ?>">RUS</a></li>
-                        <li class="<?php if ($session->get('lang') == 'en') {
-                            echo('active');
-                        } ?>"><a href="<?= URL::to(['index', 'lang' => 'en']) ?>">ENG</a></li>
-                </div>
-                </li>
-                </ul>
-            </div>
-            </div>
-        </nav>
-</header>
 <div>
     <?= $content ?>
 </div>

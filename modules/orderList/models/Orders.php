@@ -1,10 +1,9 @@
 <?php
 
-namespace app\models;
+namespace app\modules\orderList\models;
 
 use yii\db\ActiveRecord;
 use yii\data\ActiveDataProvider;
-use Yii;
 use yii\db\ActiveQuery;
 
 /**
@@ -13,46 +12,24 @@ use yii\db\ActiveQuery;
  */
 class Orders extends ActiveRecord
 {
+    const MODE = [
+        1 => 'Auto',
+        2 => 'Manual',
+    ];
+
+    const STATUS = [
+        1 => 'Pending',
+        2 => 'In progress',
+        3 => 'Completed',
+        4 => 'Canceled',
+        5 => 'Error'];
+
     /**
      * @return ActiveQuery
      */
     public function getServices(): ActiveQuery
     {
         return $this->hasOne(Services::className(), ['id' => 'service_id']);
-    }
-
-    /**
-     * @return ActiveQuery
-     */
-    public function getStatus(): ActiveQuery
-    {
-        return $this->hasOne(Status::className(), ['id' => 'status_id']);
-    }
-
-    /**
-     * @return ActiveQuery
-     */
-    public function getMode(): ActiveQuery
-    {
-        return $this->hasOne(Mode::className(), ['id' => 'mode_id']);
-    }
-
-    /**
-     * @return array
-     * @throws \yii\db\Exception
-     */
-    public function getStatusTable(): array
-    {
-        return Yii::$app->db->createCommand('SELECT * FROM status')->queryAll();
-    }
-
-    /**
-     * @return array
-     * @throws \yii\db\Exception
-     */
-    public function getModeTable(): array
-    {
-        return Yii::$app->db->createCommand('SELECT * FROM mode')->queryAll();
     }
 
     /**
@@ -106,11 +83,11 @@ class Orders extends ActiveRecord
         }
 
         if ($statusID) {
-            $query->andFilterWhere(['status_id' => $statusID]);
+            $query->andFilterWhere(['status' => $statusID]);
         }
 
         if ($modeID) {
-            $query->andFilterWhere(['mode_id' => $modeID]);
+            $query->andFilterWhere(['mode' => $modeID]);
         }
 
         $dataProvider = new ActiveDataProvider([

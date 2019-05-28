@@ -1,5 +1,5 @@
 <?php
-namespace app\services;
+namespace app\modules\orderList\services;
 
 use yii\helpers\Html;
 use yii\data\ActiveDataProvider;

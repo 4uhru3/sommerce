@@ -6,7 +6,6 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'language' => 'ru',
     'bootstrap' => ['log'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -27,7 +26,7 @@ $config = [
         ],
 
         'errorHandler' => [
-            'errorAction' => 'site/error',
+            'errorAction' => 'default/error',
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
@@ -63,6 +62,12 @@ $config = [
         ],
     ],
     'params' => $params,
+
+    'modules' => [
+        'orderList' => [
+            'class' => 'app\modules\orderList\OrderListModule',
+        ],
+    ],
 ];
 
 if (YII_ENV_DEV) {

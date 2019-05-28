@@ -11,15 +11,15 @@ use yii\helpers\Url;
         <?php
         foreach ($status as $key => $value)
         {
-            if ($statusID == $value['id'])
+            if ($statusID == $key)
             {
                 $cssClass = 'active';
             }
             else $cssClass = null;
             echo Html::tag('li',
                     Html::a(
-                        Yii::t('app', $value['name']),
-                        url::to(['index', 'statusID' => $value['id']])),
+                        Yii::t('app', $value),
+                        url::to(['index', 'statusID' => $key])),
                 ['class' => $cssClass]
             );
         } ?>

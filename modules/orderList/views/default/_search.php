@@ -6,7 +6,7 @@ use yii\helpers\Url;
 
 <body>
 <form class="form-inline" action="<?= url::to(['index'])?>" method="get">
-    <input type="hidden" name="r" value="site/index">
+    <input type="hidden" name="r" value="<?= url::to(['index'])?>">
     <input type="hidden" name="statusID" value="<?=$statusID?>">
     <div class="input-group">
         <input type="text" class="form-control" name="searchValue"
