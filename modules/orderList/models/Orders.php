@@ -145,6 +145,7 @@ class Orders extends ActiveRecord
     public function exportCSV(array $params): string
     {
         $dataProvider = $this->search($params);
+        $dataProvider->setPagination(false);
 
         $model = $dataProvider->getModels();
 
