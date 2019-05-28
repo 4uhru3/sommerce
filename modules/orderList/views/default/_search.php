@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 ?>
@@ -14,7 +13,7 @@ use yii\widgets\ActiveForm;
         ]); ?>
         <input type="text" class="form-control" name="searchValue"
                placeholder="<?= Yii::t('app', 'Search text')?>">
-        <input type="hidden" name="statusID" value="<?=$params['statusID']?>">
+        <input type="hidden" name="status" value="<?=$params['status']?>">
         <span class="input-group-btn search-select-wrap">
                     <select class="form-control search-select" name="searchColumn">
                         <option value="id" selected=""><?= Yii::t('app', 'Order ID')?></option>

@@ -2,38 +2,34 @@
 
 namespace app\modules\orderList\controllers;
 
-use app\modules\orderList\models\OrdersExport;
-use app\modules\orderList\models\OrdersSearch;
+use app\modules\orderList\models\Orders;
 use yii\web\Controller;
 use Yii;
 
+/**
+ * Class DefaultController
+ * @package app\modules\orderList\controllers
+ */
 class DefaultController extends Controller
 {
     /**
      * @return string
-     * @throws \yii\db\Exception
      */
     public function actionIndex()
     {
-        $params = Yii::$app->request->get();
 
-        if(isset($params['lang']))
-        {
-            Yii::$app->language = $params['lang'];
-        }
-        $params['statusID'] = isset($params['statusID']) ? $params['statusID'] : null;
-        $params['serviceID'] = isset($params['serviceID']) ? $params['serviceID'] : null;
-        $params['modeID'] = isset($params['modeID']) ? $params['modeID'] : null;
-        $params['searchColumn'] = isset($params['searchColumn']) ? $params['searchColumn'] : null;
-        $params['searchValue'] = isset($params['searchValue']) ? $params['searchValue'] : null;
+        $params = (new Orders)->validateParams(Yii::$app->request->get());
 
-        $dataProvider = (new OrdersSearch)->searchOrders($params);
+        $dataProvider = (new Orders)->search($params);
 
-        isset($params['export']) ? (new OrdersExport)->exportCSV($dataProvider) : false;
+        isset($params['export']) ? (new Orders)->exportCSV($params) : false;
+
+        $ordersModel = $dataProvider->getModels();
 
         return $this->render('index', [
                 'dataProvider' => $dataProvider,
                 'params' => $params,
+                'ordersModel' => $ordersModel,
             ]
         );
     }

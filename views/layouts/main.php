@@ -47,12 +47,6 @@ $this->beginPage();
                 <div class="collapse navbar-collapse" id="bs-navbar-collapse">
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="<?= URL::to(['index']) ?>">Orders</a></li>
-                        <li class="<?php if (Yii::$app->language == 'ru') {
-                            echo('active');
-                        } ?>"><a href="<?= URL::to(['index', 'lang' => 'ru']) ?>">RUS</a></li>
-                        <li class="<?php if (Yii::$app->language == 'en') {
-                            echo('active');
-                        } ?>"><a href="<?= URL::to(['index', 'lang' => 'en']) ?>">ENG</a></li>
                 </div>
                 </li>
                 </ul>

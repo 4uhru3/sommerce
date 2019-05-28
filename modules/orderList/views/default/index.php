@@ -6,7 +6,6 @@ $this->title = 'Order List "Sommerce"';
 
 use app\modules\orderList\services\PageCounterService;
 use app\modules\orderList\models\Orders;
-use \app\modules\orderList\services\OrderTableView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
@@ -24,9 +23,9 @@ use \app\modules\orderList\services\ServiceCounter;
                     Url::to([
                         'index',
                         'export' => true,
-                        'modeID' => $params['modeID'],
-                        'serviceID' => $params['serviceID'],
-                        'statusID' => $params['statusID'],
+                        'mode' => $params['mode'],
+                        'service_id' => $params['service_id'],
+                        'status' => $params['status'],
                         'searchColumn' => $params['searchColumn'],
                         'searchValue' => $params['searchValue']
                     ])
@@ -53,9 +52,10 @@ use \app\modules\orderList\services\ServiceCounter;
                             <?= Html::a('All ' . (new ServiceCounter)->countTotalServices(),
                                     Url::to([
                                         'index',
-                                        'serviceID' => null,
-                                        'modeID' => $params['modeID'],
-                                        'statusID' => $params['statusID']])
+                                        'service_id' => null,
+                                        'mode' => $params['mode'],
+                                        'status' => $params['status']
+                                    ])
                             )?>
                         </li>
                         <?php
@@ -64,9 +64,10 @@ use \app\modules\orderList\services\ServiceCounter;
                             echo Html::tag('li',
                                     Html::a('<span class="label-id">' . $service['cnt'] . '</span>' .  Yii::t('app', $service['name']),
                                             Url::to(['index',
-                                                'serviceID' => $service['id'],
-                                                'modeID' => $params['modeID'],
-                                                'statusID' => $params['statusID']])
+                                                'service_id' => $service['id'],
+                                                'mode' => $params['mode'],
+                                                'status' => $params['status']
+                                             ])
                                             )
                                         );
                         }
@@ -87,9 +88,9 @@ use \app\modules\orderList\services\ServiceCounter;
                             <a href="<?= Url::to(
                                 [
                                     'index',
-                                    'modeID' => null,
-                                    'serviceID' => $params['serviceID'],
-                                    'statusID' => $params['statusID']
+                                    'mode' => null,
+                                    'service_id' => isset($params['service_id']) ? $params['service_id'] : null,
+                                    'status' => $params['status']
                                 ]
                             ) ?>">
                                 <?= Yii::t('app', 'All') ?>
@@ -101,9 +102,9 @@ use \app\modules\orderList\services\ServiceCounter;
                             echo Html::a(Yii::t('app', $value),
                                 Url::to([
                                     'index',
-                                    'modeID' => $key,
-                                    'serviceID' => $params['serviceID'],
-                                    'statusID' => $params['statusID']
+                                    'mode' => $key,
+                                    'service_id' => isset($params['service_id']) ? $params['service_id'] : null,
+                                    'status' => $params['status']
                                 ]));
                             echo '</li>';
                         }
@@ -117,7 +118,24 @@ use \app\modules\orderList\services\ServiceCounter;
         </tr>
         </thead>
         <tbody>
-        <?php (new OrderTableView)->viewTable($dataProvider)?>
+        <?php
+        foreach ($ordersModel as $model)
+        {
+            echo '<tr>';
+            echo('<td>' . $model->id . '</td>');
+            echo('<td>' . $model->user . '</td>');
+            echo('<td>' . Html::a($model->link, $model->link) . '</td>');
+            echo('<td>' . $model->quantity . '</td>');
+            echo('<td><span class="label-id">' . implode('',(new Orders)->getServiceCount($model->services->id)) .
+                '</span> ' . $model->services->name . '</td>');
+            echo('<td>' . Yii::t('app', (new Orders)::STATUS[$model->status]) . '</td>');
+            echo('<td>' . Yii::t('app', (new Orders)::MODE[$model->mode]) . '</td>');
+            echo('<td><span class="nowrap">' . Yii::$app->formatter->asDate($model->created_at) .
+                '</span><span class="nowrap">' . Yii::$app->formatter->asTime($model->created_at) .
+                '</span></td>');
+            echo '</tr>';
+        }
+        ?>
         </tbody>
     </table>
     <!--  Окончание таблицы  -->
