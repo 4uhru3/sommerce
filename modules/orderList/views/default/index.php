@@ -4,14 +4,18 @@
 
 $this->title = 'Order List "Sommerce"';
 
+use app\modules\orderList\services\PageCounterService;
+use app\modules\orderList\models\Orders;
+use \app\modules\orderList\services\OrderTableView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
+use \app\modules\orderList\services\ServiceCounter;
 ?>
 
 <div class="container-fluid">
     <!--  Частичное представление нав-панели  -->
-    <?= $this->render('_navigation', ['status' => $status, 'statusID' => $statusID]) ?>
+    <?= $this->render('_navigation', ['status' => (new Orders)::STATUS, 'statusID' => $params['statusID']]) ?>
     <!--  Ссылка на экспорт в CSV  -->
     <ul class="p-b nav">
         <li class="pull-right custom-search">
@@ -20,11 +24,12 @@ use yii\widgets\LinkPager;
                     Url::to([
                         'index',
                         'export' => true,
-                        'modeID' => $modeID,
-                        'serviceID' => $serviceID,
-                        'statusID' => $statusID,
-                        'searchColumn' => Yii::$app->request->get('searchColumn'),
-                        'searchValue' => Yii::$app->request->get('searchValue')
+//                        'modeID' => $params['modeID'],
+//                        'serviceID' => $params['serviceID'],
+//                        'statusID' => $params['statusID'],
+//                        'searchColumn' => $params['searchColumn'],
+//                        'searchValue' => $params['searchValue']
+                    $params
                     ])
                 )?>
         </li>
@@ -46,23 +51,23 @@ use yii\widgets\LinkPager;
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                         <li class="active">
-                            <?= Html::a('All ' . $serviceTotal,
+                            <?= Html::a('All ' . (new ServiceCounter)->countTotalServices(),
                                     Url::to([
                                         'index',
                                         'serviceID' => null,
-                                        'modeID' => $modeID,
-                                        'statusID' => $statusID])
+                                        'modeID' => $params['modeID'],
+                                        'statusID' => $params['statusID']])
                             )?>
                         </li>
                         <?php
-                        foreach ($serviceCount as $service)
+                        foreach ((new Orders)->getUniqueServiceCountList() as $service)
                         {
                             echo Html::tag('li',
                                     Html::a('<span class="label-id">' . $service['cnt'] . '</span>' .  Yii::t('app', $service['name']),
                                             Url::to(['index',
                                                 'serviceID' => $service['id'],
-                                                'modeID' => $modeID,
-                                                'statusID' => $statusID])
+                                                'modeID' => $params['modeID'],
+                                                'statusID' => $params['statusID']])
                                             )
                                         );
                         }
@@ -84,22 +89,22 @@ use yii\widgets\LinkPager;
                                 [
                                     'index',
                                     'modeID' => null,
-                                    'serviceID' => $serviceID,
-                                    'statusID' => $statusID
+                                    'serviceID' => $params['serviceID'],
+                                    'statusID' => $params['statusID']
                                 ]
                             ) ?>">
                                 <?= Yii::t('app', 'All') ?>
                             </a>
                         </li>
                         <?php
-                        foreach ($mode as $key => $value) {
+                        foreach ((new Orders)::MODE as $key => $value) {
                             echo '<li>';
                             echo Html::a(Yii::t('app', $value),
                                 Url::to([
                                     'index',
                                     'modeID' => $key,
-                                    'serviceID' => $serviceID,
-                                    'statusID' => $statusID
+                                    'serviceID' => $params['serviceID'],
+                                    'statusID' => $params['statusID']
                                 ]));
                             echo '</li>';
                         }
@@ -113,23 +118,7 @@ use yii\widgets\LinkPager;
         </tr>
         </thead>
         <tbody>
-        <?php
-        foreach ($orderModel as $model) {
-            echo '<tr>';
-            echo('<td>' . $model->id . '</td>');
-            echo('<td>' . $model->user . '</td>');
-            echo('<td>' . Html::a($model->link, $model->link) . '</td>');
-            echo('<td>' . $model->quantity . '</td>');
-            echo('<td><span class="label-id">' . $uniqueServices[$model->services->id] .
-                '</span> ' . $model->services->name . '</td>');
-            echo('<td>' . Yii::t('app',$status[$model->status]) . '</td>');
-            echo('<td>' . Yii::t('app', $mode[$model->mode]) . '</td>');
-            echo('<td><span class="nowrap">' . Yii::$app->formatter->asDate($model->created_at) .
-                '</span><span class="nowrap">' . Yii::$app->formatter->asTime($model->created_at) .
-                '</span></td>');
-            echo '</tr>';
-        }
-        ?>
+        <?php (new OrderTableView)->viewTable($dataProvider)?>
         </tbody>
     </table>
     <!--  Окончание таблицы  -->
@@ -139,7 +128,7 @@ use yii\widgets\LinkPager;
         </li>
         <li class="pull-right">
             <!-- Выводим количество записей-->
-            <?=$pageCounter?>
+            <?=(new PageCounterService())->createCounter($dataProvider);?>
         </li>
     </ul>
 </div>

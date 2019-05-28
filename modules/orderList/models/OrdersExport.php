@@ -4,11 +4,10 @@
 namespace app\modules\orderList\models;
 
 use yii\data\ActiveDataProvider;
-use yii\db\ActiveRecord;
 
 class OrdersExport
 {
-  public function exportCSV(ActiveDataProvider $dataProvider, ActiveRecord $orders): string
+  public function exportCSV(ActiveDataProvider $dataProvider): string
   {
       $dataProvider->setPagination(false);
 
@@ -21,8 +20,8 @@ class OrdersExport
               ';' . $value->link .
               ';' . $value->quantity .
               ';' . $value->services->name .
-              ';' . $orders::STATUS[$value->status] .
-              ';' . $orders::MODE[$value->mode] .
+              ';' . (new Orders)::STATUS[$value->status] .
+              ';' . (new Orders)::MODE[$value->mode] .
               ';' . date('Y-m-d H:i:s', $value->created_at).
               "\r\n";
       }
