@@ -15,7 +15,7 @@ use \app\modules\orderList\services\ServiceCounter;
 
 <div class="container-fluid">
     <!--  Частичное представление нав-панели  -->
-    <?= $this->render('_navigation', ['status' => (new Orders)::STATUS, 'statusID' => $params['statusID']]) ?>
+    <?= $this->render('_navigation', ['params' => $params]) ?>
     <!--  Ссылка на экспорт в CSV  -->
     <ul class="p-b nav">
         <li class="pull-right custom-search">
@@ -24,12 +24,11 @@ use \app\modules\orderList\services\ServiceCounter;
                     Url::to([
                         'index',
                         'export' => true,
-//                        'modeID' => $params['modeID'],
-//                        'serviceID' => $params['serviceID'],
-//                        'statusID' => $params['statusID'],
-//                        'searchColumn' => $params['searchColumn'],
-//                        'searchValue' => $params['searchValue']
-                    $params
+                        'modeID' => $params['modeID'],
+                        'serviceID' => $params['serviceID'],
+                        'statusID' => $params['statusID'],
+                        'searchColumn' => $params['searchColumn'],
+                        'searchValue' => $params['searchValue']
                     ])
                 )?>
         </li>
