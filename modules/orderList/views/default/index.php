@@ -30,8 +30,7 @@ use app\modules\orderList\models\Orders;
             <?= Html::a(
                 Yii::t('app', 'Export'),
                     Url::to([
-                        'index',
-                        'export' => true,
+                        'download',
                         'mode' => $params['mode'],
                         'service_id' => $params['service_id'],
                         'status' => $params['status'],
@@ -127,8 +126,8 @@ use app\modules\orderList\models\Orders;
                 '</span> ' . $model->services->name . '</td>');
             echo('<td>' . Orders::getStatusName($model->status) . '</td>');
             echo('<td>' . Orders::getModeName($model->mode) . '</td>');
-            echo('<td><span class="nowrap">' . Yii::$app->formatter->asDate($model->created_at) .
-                '</span><span class="nowrap">' . Yii::$app->formatter->asTime($model->created_at) .
+            echo('<td><span class="nowrap">' . Orders::getDate($model->created_at) .
+                '</span><span class="nowrap">' . Orders::getTime($model->created_at) .
                 '</span></td>');
             echo '</tr>';
         }

@@ -2,7 +2,6 @@
 
 namespace app\modules\orderList\models;
 
-use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\db\ActiveQuery;
 use Yii;
@@ -13,6 +12,8 @@ use Yii;
  */
 class Orders extends ActiveRecord
 {
+    const PAGE_SIZE = 100;
+
     const MODE_ALL = null;
     const MODE_AUTO = 1;
     const MODE_MANUAL = 2;
@@ -144,88 +145,22 @@ class Orders extends ActiveRecord
     }
 
     /**
-     * @return array
-     */
-    public function rules()
-    {
-        return [
-            ['service_id','integer'],
-            ['status','integer', 'message' => 'Not Integer'],
-            ['mode','integer'],
-            ['id','integer'],
-            ['link', 'filter', 'filter' => 'trim'],
-            ['user','filter', 'filter' => 'trim']
-        ];
-    }
-
-    /**
-     * @param $params
-     * @return array
-     */
-    public function validateParams(array $params) : array
-    {
-        $params['status'] = isset($params['status']) ? $params['status'] : null;
-        $params['service_id'] = isset($params['service_id']) ? $params['service_id'] : null;
-        $params['mode'] = isset($params['mode']) ? $params['mode'] : null;
-        $params['searchColumn'] = isset($params['searchColumn']) ? $params['searchColumn'] : $params['searchColumn'] = 'id';
-        $params['searchValue'] = isset($params['searchValue']) ? $params['searchValue'] : null;
-
-        return $params;
-    }
-
-    /**
-     * @param $params
-     * @return ActiveDataProvider
-     */
-    public function search(array $params): ActiveDataProvider
-    {
-        $query = Orders::find();
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'pageSize' => 100
-            ],
-            'sort' => [
-                'defaultOrder' => ['id' => SORT_DESC]
-            ]
-        ]);
-
-            if (!($this->load($params, '') && $this->validate())) {
-
-                return $dataProvider;
-            }
-
-        $query->andFilterWhere([$params['searchColumn'] => $params['searchValue']]);
-        $query->andFilterWhere(['service_id' => $this->service_id]);
-        $query->andFilterWhere(['status' => $this->status]);
-        $query->andFilterWhere(['mode' => $this->mode]);
-
-        return $dataProvider;
-    }
-
-    /**
-     * @param ActiveDataProvider $dataProvider
+     * @param $date
      * @return string
+     * @throws \yii\base\InvalidConfigException
      */
-    public function exportCSV(ActiveDataProvider $dataProvider): string
+    public static function getDate($date): string
     {
-        $dataProvider->setPagination(false);
-        $model = $dataProvider->getModels();
-        $data = "ID;User;Link;Quantity;Service;Status;Mode;Created \r\n";
-        foreach ($model as $value) {
-            $data .= $value->id .
-                ';' . $value->user .
-                ';' . $value->link .
-                ';' . $value->quantity .
-                ';' . $value->services->name .
-                ';' . (new Orders)::STATUS[$value->status] .
-                ';' . (new Orders)::MODE[$value->mode] .
-                ';' . date('Y-m-d H:i:s', $value->created_at).
-                "\r\n";
-        }
-        header('Content-type: text/csv');
-        header('Content-Disposition: attachment; filename="export_' . date('d.m.Y') . '.csv"');
-        return $data;
+       return Yii::$app->formatter->asDate($date);
+    }
+
+    /**
+     * @param $date
+     * @return string
+     * @throws \yii\base\InvalidConfigException
+     */
+    public static function getTime($date): string
+    {
+        return Yii::$app->formatter->asTime($date);
     }
 }

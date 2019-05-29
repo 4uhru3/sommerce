@@ -3,6 +3,7 @@
 namespace app\modules\orderList\controllers;
 
 use app\modules\orderList\models\Orders;
+use app\modules\orderList\models\SearchOrders;
 use yii\web\Controller;
 use Yii;
 
@@ -17,18 +18,38 @@ class DefaultController extends Controller
      */
     public function actionIndex()
     {
-        $orders = new Orders;
+        $searchModel = new SearchOrders();
 
-        $params = $orders->validateParams(Yii::$app->request->get());
+        $params = $searchModel->validateParams(Yii::$app->request->get());
 
-        $dataProvider = $orders->search($params);
+        $dataProvider = $searchModel->search($params);
 
-        isset($params['export']) ? $orders->exportCSV($dataProvider) : false;
+        $dataProvider->setPagination(['pageSize' => Orders::PAGE_SIZE]);
+        $dataProvider->setSort(['defaultOrder' => ['id' => SORT_DESC]]);
 
         return $this->render('index', [
                 'dataProvider' => $dataProvider,
                 'params' => $params,
             ]
         );
+    }
+
+    /**
+     * @return \yii\console\Response|\yii\web\Response
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\web\RangeNotSatisfiableHttpException
+     */
+    public function actionDownload() {
+
+        $searchModel = new SearchOrders();
+
+        $params = $searchModel->validateParams(Yii::$app->request->get());
+
+        $csv = $searchModel->createCSV($params);
+
+        return Yii::$app->response->sendContentAsFile($csv, 'export.csv', [
+            'mimeType' => 'application/csv',
+            'inline'   => false
+        ]);
     }
 }
