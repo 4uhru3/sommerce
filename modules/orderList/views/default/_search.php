@@ -3,7 +3,6 @@
 use yii\widgets\ActiveForm;
 
 ?>
-
 <body>
 <form class="form-inline">
     <div class="input-group">
@@ -28,4 +27,3 @@ use yii\widgets\ActiveForm;
     </div>
 </form>
 </body>
-

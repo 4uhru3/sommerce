@@ -29,13 +29,12 @@ class PageCounterService
         }
         else{
             $pageFrom = $pageNum * $pageLimit + 1;
-
-            if (($pageOffset + $pageLimit) < $pageSum) {
-                $pageTo = ($pageOffset + $pageLimit);
-            }
-            else {
-                $pageTo = $pageSum;
-            }
+                if (($pageOffset + $pageLimit) < $pageSum) {
+                    $pageTo = ($pageOffset + $pageLimit);
+                }
+                else {
+                    $pageTo = $pageSum;
+                }
 
             return html::tag('span',
                 Yii::t('app', 'from') . ' ' . $pageFrom . ' ' .

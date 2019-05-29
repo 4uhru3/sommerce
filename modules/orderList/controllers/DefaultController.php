@@ -5,6 +5,7 @@ namespace app\modules\orderList\controllers;
 use app\modules\orderList\models\SearchOrders;
 use yii\web\Controller;
 use Yii;
+use yii\web\Response;
 
 /**
  * Class DefaultController
@@ -15,7 +16,7 @@ class DefaultController extends Controller
     /**
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new SearchOrders();
         $params = Yii::$app->request->get();
@@ -34,7 +35,7 @@ class DefaultController extends Controller
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\web\RangeNotSatisfiableHttpException
      */
-    public function actionDownload()
+    public function actionDownload(): Response
     {
         $searchModel = new SearchOrders();
         $params = yii::$app->request->get();

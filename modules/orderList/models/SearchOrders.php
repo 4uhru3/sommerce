@@ -45,9 +45,11 @@ class SearchOrders extends Orders
             [['id'],'integer'],
             [['id'],'filter','filter' => 'trim'],
             [['link'], 'filter', 'filter' => 'trim' ],
+            [['link'], 'url'],
             [['user'],'filter', 'filter' => 'trim'],
             [['searchColumn'], 'default'],
-            [['searchValue'], 'default']
+            [['searchValue'], 'default'],
+            [['searchValue'], 'filter', 'filter' => 'trim']
         ];
     }
 
@@ -71,7 +73,6 @@ class SearchOrders extends Orders
     public function search(array $params): ActiveDataProvider
     {
         $query = Orders::find();
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
@@ -81,12 +82,9 @@ class SearchOrders extends Orders
                 'defaultOrder' => ['id' => SORT_DESC]
             ]
         ]);
-
         if (!($this->load($params, '') && $this->validate())) {
-
             return $dataProvider;
         }
-
         $query->andFilterWhere([$this->searchColumn => $this->searchValue]);
         $query->andFilterWhere(['service_id' => $this->service_id]);
         $query->andFilterWhere(['status' => $this->status]);
@@ -106,8 +104,8 @@ class SearchOrders extends Orders
         $dataProvider->setPagination(false);
         $dataProvider->setSort(['defaultOrder' => ['id' => SORT_DESC]]);
         $model = $dataProvider->getModels();
-        $data = "ID;User;Link;Quantity;Service;Status;Mode;Created \r\n";
 
+        $data = "ID;User;Link;Quantity;Service;Status;Mode;Created \r\n";
         foreach ($model as $value) {
             $data .= $value->id .
                 ';' . $value->user .

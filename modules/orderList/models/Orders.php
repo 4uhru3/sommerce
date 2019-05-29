@@ -13,11 +13,9 @@ use Yii;
 class Orders extends ActiveRecord
 {
     const PAGE_SIZE = 100;
-
     const MODE_ALL = null;
     const MODE_AUTO = 1;
     const MODE_MANUAL = 2;
-
     const STATUS_ALL_ORDERS = null;
     const STATUS_PENDING = 1;
     const STATUS_IN_PROGRESS = 2;
@@ -99,7 +97,6 @@ class Orders extends ActiveRecord
     {
         $result = '';
         $mode = self::getModeLabel();
-
         foreach ($mode as $key => $value){
             if($key == $id){
                 $result = $value;
@@ -134,7 +131,6 @@ class Orders extends ActiveRecord
     {
         $result = '';
         $status = self::getStatusLabel();
-
         foreach ($status as $key => $value){
             if($key == $id){
                 $result = $value;

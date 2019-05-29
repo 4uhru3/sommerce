@@ -17,11 +17,9 @@ class ServiceCounter
     public static function countTotalServices() : string
     {
         $serviceTotal = (new Orders())->getTotalCount();
-
         foreach ($serviceTotal as $value) {
             $serviceTotal = ($value['serviceCount']);
         }
-
         return $serviceTotal;
     }
 }
