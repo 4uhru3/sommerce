@@ -17,19 +17,17 @@ class DefaultController extends Controller
      */
     public function actionIndex()
     {
+        $orders = new Orders;
 
-        $params = (new Orders)->validateParams(Yii::$app->request->get());
+        $params = $orders->validateParams(Yii::$app->request->get());
 
-        $dataProvider = (new Orders)->search($params);
+        $dataProvider = $orders->search($params);
 
-        isset($params['export']) ? (new Orders)->exportCSV($params) : false;
-
-        $ordersModel = $dataProvider->getModels();
+        isset($params['export']) ? $orders->exportCSV($dataProvider) : false;
 
         return $this->render('index', [
                 'dataProvider' => $dataProvider,
                 'params' => $params,
-                'ordersModel' => $ordersModel,
             ]
         );
     }

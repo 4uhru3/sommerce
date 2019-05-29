@@ -1,25 +1,34 @@
 <?php
 
-/* @var $this yii\web\View */
+/**
+ * @var $this yii\web\View
+ * @var $dataProvider yii\data\ActiveDataProvider
+ */
 
 $this->title = 'Order List "Sommerce"';
 
 use app\modules\orderList\services\PageCounterService;
-use app\modules\orderList\models\Orders;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
 use \app\modules\orderList\services\ServiceCounter;
+use app\modules\orderList\models\Orders;
+
 ?>
 
 <div class="container-fluid">
-    <!--  Частичное представление нав-панели  -->
-    <?= $this->render('_navigation', ['params' => $params]) ?>
+    <ul class="nav nav-tabs p-b">
+        <?= $this->render('_navigation', ['params' => $params]) ?>
+        <li class="pull-right custom-search">
+            <?= $this->render('_search', ['params' => $params]) ?>
+        </li>
+    </ul>
+
     <!--  Ссылка на экспорт в CSV  -->
     <ul class="p-b nav">
         <li class="pull-right custom-search">
             <?= Html::a(
-                    Yii::t('app', 'Export'),
+                Yii::t('app', 'Export'),
                     Url::to([
                         'index',
                         'export' => true,
@@ -50,16 +59,16 @@ use \app\modules\orderList\services\ServiceCounter;
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                         <li class="active">
                             <?= Html::a('All ' . (new ServiceCounter)->countTotalServices(),
-                                    Url::to([
-                                        'index',
-                                        'service_id' => null,
+                                Url::to([
+                                    'index',
+                                    'service_id' => null,
                                         'mode' => $params['mode'],
                                         'status' => $params['status']
                                     ])
                             )?>
                         </li>
                         <?php
-                        foreach ((new Orders)->getUniqueServiceCountList() as $service)
+                        foreach (Orders::getUniqueServiceCountList() as $service)
                         {
                             echo Html::tag('li',
                                     Html::a('<span class="label-id">' . $service['cnt'] . '</span>' .  Yii::t('app', $service['name']),
@@ -84,26 +93,14 @@ use \app\modules\orderList\services\ServiceCounter;
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li class="active">
-                            <a href="<?= Url::to(
-                                [
-                                    'index',
-                                    'mode' => null,
-                                    'service_id' => isset($params['service_id']) ? $params['service_id'] : null,
-                                    'status' => $params['status']
-                                ]
-                            ) ?>">
-                                <?= Yii::t('app', 'All') ?>
-                            </a>
-                        </li>
                         <?php
-                        foreach ((new Orders)::MODE as $key => $value) {
+                        foreach (Orders::getModeLabel() as $key => $value) {
                             echo '<li>';
-                            echo Html::a(Yii::t('app', $value),
-                                Url::to([
+                            echo Html::a(Orders::getModeName($key),
+                                 Url::to([
                                     'index',
                                     'mode' => $key,
-                                    'service_id' => isset($params['service_id']) ? $params['service_id'] : null,
+                                    'service_id' => $params['service_id'],
                                     'status' => $params['status']
                                 ]));
                             echo '</li>';
@@ -119,17 +116,17 @@ use \app\modules\orderList\services\ServiceCounter;
         </thead>
         <tbody>
         <?php
-        foreach ($ordersModel as $model)
+        foreach ($dataProvider->getModels() as $model)
         {
             echo '<tr>';
             echo('<td>' . $model->id . '</td>');
             echo('<td>' . $model->user . '</td>');
             echo('<td>' . Html::a($model->link, $model->link) . '</td>');
             echo('<td>' . $model->quantity . '</td>');
-            echo('<td><span class="label-id">' . implode('',(new Orders)->getServiceCount($model->services->id)) .
+            echo('<td><span class="label-id">' . implode('', Orders::getServiceCount($model->services->id)) .
                 '</span> ' . $model->services->name . '</td>');
-            echo('<td>' . Yii::t('app', (new Orders)::STATUS[$model->status]) . '</td>');
-            echo('<td>' . Yii::t('app', (new Orders)::MODE[$model->mode]) . '</td>');
+            echo('<td>' . Orders::getStatusName($model->status) . '</td>');
+            echo('<td>' . Orders::getModeName($model->mode) . '</td>');
             echo('<td><span class="nowrap">' . Yii::$app->formatter->asDate($model->created_at) .
                 '</span><span class="nowrap">' . Yii::$app->formatter->asTime($model->created_at) .
                 '</span></td>');
