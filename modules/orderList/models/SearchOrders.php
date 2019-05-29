@@ -2,10 +2,18 @@
 
 namespace app\modules\orderList\models;
 
+use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
+/**
+ * Class SearchOrders
+ * @package app\modules\orderList\models
+ */
 class SearchOrders extends Orders
 {
+    public $searchColumn;
+    public $searchValue;
+
     /**
      * @inheritdoc
      */
@@ -17,15 +25,29 @@ class SearchOrders extends Orders
     /**
      * @return array
      */
+    public function scenarios()
+    {
+        return Model::scenarios();
+    }
+
+    /**
+     * @return array
+     */
     public function rules()
     {
         return [
-            ['service_id','integer'],
-            ['status','integer', 'message' => 'Not Integer'],
-            ['mode','integer'],
-            ['id','integer'],
-            ['link', 'filter', 'filter' => 'trim'],
-            ['user','filter', 'filter' => 'trim']
+            [['service_id'],'integer'],
+            [['service_id'],'default'],
+            [['status'],'integer'],
+            [['status'],'default'],
+            [['mode'],'integer'],
+            [['mode'],'default'],
+            [['id'],'integer'],
+            [['id'],'filter','filter' => 'trim'],
+            [['link'], 'filter', 'filter' => 'trim' ],
+            [['user'],'filter', 'filter' => 'trim'],
+            [['searchColumn'], 'default'],
+            [['searchValue'], 'default']
         ];
     }
 
@@ -33,13 +55,11 @@ class SearchOrders extends Orders
      * @param $params
      * @return array
      */
-    public function validateParams(array $params): array
+    public function getParams(): array
     {
-        $params['status'] = isset($params['status']) ? $params['status'] : null;
-        $params['service_id'] = isset($params['service_id']) ? $params['service_id'] : null;
-        $params['mode'] = isset($params['mode']) ? $params['mode'] : null;
-        $params['searchColumn'] = isset($params['searchColumn']) ? $params['searchColumn'] : $params['searchColumn'] = 'id';
-        $params['searchValue'] = isset($params['searchValue']) ? $params['searchValue'] : null;
+        $params = $this->attributes;
+        $params['searchColumn'] = $this->searchColumn;
+        $params['searchValue'] = $this->searchValue;
 
         return $params;
     }
@@ -54,6 +74,12 @@ class SearchOrders extends Orders
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => Orders::PAGE_SIZE
+            ],
+            'sort' => [
+                'defaultOrder' => ['id' => SORT_DESC]
+            ]
         ]);
 
         if (!($this->load($params, '') && $this->validate())) {
@@ -61,7 +87,7 @@ class SearchOrders extends Orders
             return $dataProvider;
         }
 
-        $query->andFilterWhere([$params['searchColumn'] => $params['searchValue']]);
+        $query->andFilterWhere([$this->searchColumn => $this->searchValue]);
         $query->andFilterWhere(['service_id' => $this->service_id]);
         $query->andFilterWhere(['status' => $this->status]);
         $query->andFilterWhere(['mode' => $this->mode]);
@@ -79,10 +105,9 @@ class SearchOrders extends Orders
         $dataProvider = (new SearchOrders)->search($params);
         $dataProvider->setPagination(false);
         $dataProvider->setSort(['defaultOrder' => ['id' => SORT_DESC]]);
-
         $model = $dataProvider->getModels();
-
         $data = "ID;User;Link;Quantity;Service;Status;Mode;Created \r\n";
+
         foreach ($model as $value) {
             $data .= $value->id .
                 ';' . $value->user .

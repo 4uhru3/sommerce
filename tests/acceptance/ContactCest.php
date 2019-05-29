@@ -6,7 +6,7 @@ class ContactCest
 {
     public function _before(\AcceptanceTester $I)
     {
-        $I->amOnPage(Url::toRoute('/site/contact'));
+        $I->amOnPage(Url::toRoute('/default/contact'));
     }
     
     public function contactPageWorks(AcceptanceTester $I)

@@ -2,7 +2,6 @@
 
 namespace app\modules\orderList\controllers;
 
-use app\modules\orderList\models\Orders;
 use app\modules\orderList\models\SearchOrders;
 use yii\web\Controller;
 use Yii;
@@ -19,13 +18,9 @@ class DefaultController extends Controller
     public function actionIndex()
     {
         $searchModel = new SearchOrders();
-
-        $params = $searchModel->validateParams(Yii::$app->request->get());
-
+        $params = Yii::$app->request->get();
         $dataProvider = $searchModel->search($params);
-
-        $dataProvider->setPagination(['pageSize' => Orders::PAGE_SIZE]);
-        $dataProvider->setSort(['defaultOrder' => ['id' => SORT_DESC]]);
+        $params = $searchModel->getParams();
 
         return $this->render('index', [
                 'dataProvider' => $dataProvider,
@@ -39,12 +34,10 @@ class DefaultController extends Controller
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\web\RangeNotSatisfiableHttpException
      */
-    public function actionDownload() {
-
+    public function actionDownload()
+    {
         $searchModel = new SearchOrders();
-
-        $params = $searchModel->validateParams(Yii::$app->request->get());
-
+        $params = yii::$app->request->get();
         $csv = $searchModel->createCSV($params);
 
         return Yii::$app->response->sendContentAsFile($csv, 'export.csv', [

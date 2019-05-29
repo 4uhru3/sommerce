@@ -57,12 +57,12 @@ use app\modules\orderList\models\Orders;
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                         <li class="active">
-                            <?= Html::a('All ' . (new ServiceCounter)->countTotalServices(),
+                            <?= Html::a('All ' . ServiceCounter::countTotalServices(),
                                 Url::to([
                                     'index',
                                     'service_id' => null,
-                                        'mode' => $params['mode'],
-                                        'status' => $params['status']
+                                    'mode' => $params['mode'],
+                                    'status' => $params['status']
                                     ])
                             )?>
                         </li>
@@ -71,13 +71,14 @@ use app\modules\orderList\models\Orders;
                         {
                             echo Html::tag('li',
                                     Html::a('<span class="label-id">' . $service['cnt'] . '</span>' .  Yii::t('app', $service['name']),
-                                            Url::to(['index',
+                                            Url::to([
+                                                'index',
                                                 'service_id' => $service['id'],
                                                 'mode' => $params['mode'],
                                                 'status' => $params['status']
-                                             ])
-                                            )
-                                        );
+                                            ])
+                                    )
+                            );
                         }
                         ?>
                     </ul>
