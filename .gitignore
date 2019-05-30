@@ -34,3 +34,5 @@ tests/
 db-local.php
 params-local.php
 web-local.php
+test.php
+yii.php
