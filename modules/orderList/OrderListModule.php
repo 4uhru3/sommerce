@@ -13,5 +13,6 @@ class OrderListModule extends Module
     public function init()
     {
         parent::init();
+        $this->layout = 'main';
     }
 }

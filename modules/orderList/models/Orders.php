@@ -23,6 +23,14 @@ class Orders extends ActiveRecord
     const STATUS_ERROR = 5;
 
     /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return 'orders';
+    }
+
+    /**
      * @return ActiveQuery
      */
     public function getServices(): ActiveQuery

@@ -28,21 +28,19 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    //'defaultRoute' => 'orderList/default/index',
     'components' => [
         'formatter' => [
             'dateFormat' => 'Y-MM-dd',
             'timeFormat' => 'HH:mm:ss',
         ],
-
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => '-V2tqDIgWN4iQ0_Q7poua_XHQSa1BIKh',
         ],
-
         'errorHandler' => [
             'errorAction' => 'default/error',
         ],
-
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [

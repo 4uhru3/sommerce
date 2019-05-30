@@ -2,7 +2,7 @@
 
 namespace app\modules\orderList\controllers;
 
-use app\modules\orderList\models\SearchOrders;
+use app\modules\orderList\models\OrdersSearch;
 use yii\web\Controller;
 use Yii;
 use yii\web\Response;
@@ -18,7 +18,7 @@ class DefaultController extends Controller
      */
     public function actionIndex(): string
     {
-        $searchModel = new SearchOrders();
+        $searchModel = new OrdersSearch();
         $params = Yii::$app->request->get();
         $dataProvider = $searchModel->search($params);
         $params = $searchModel->getParams();
@@ -37,7 +37,7 @@ class DefaultController extends Controller
      */
     public function actionDownload(): Response
     {
-        $searchModel = new SearchOrders();
+        $searchModel = new OrdersSearch();
         $params = yii::$app->request->get();
         $csv = $searchModel->createCSV($params);
 
