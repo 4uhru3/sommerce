@@ -69,7 +69,6 @@ class Orders extends ActiveRecord
     }
 
     /**
-     * @param $id
      * @return array
      * @throws \yii\db\Exception
      */

@@ -23,8 +23,6 @@ use \app\modules\orderList\services\ServiceCounter;
             <?= $this->render('_search', ['params' => $params]) ?>
         </li>
     </ul>
-
-    <!--  Ссылка на экспорт в CSV  -->
     <ul class="p-b nav">
         <li class="pull-right custom-search">
             <?= Html::a(
@@ -40,7 +38,6 @@ use \app\modules\orderList\services\ServiceCounter;
                 )?>
         </li>
     </ul>
-    <!--  Начало таблицы  -->
     <table class="table order-table">
         <thead>
         <tr>
@@ -73,8 +70,8 @@ use \app\modules\orderList\services\ServiceCounter;
                                                 'mode' => $params['mode'],
                                                 'status' => $params['status']
                                             ])?>>
-                               <span class="label-id"><?=$service['cnt']?></span>
-                                   <?=Yii::t('app', $service['name'])?>
+                                <span class="label-id"><?=$service['cnt']?></span>
+                                <?=Yii::t('app', $service['name'])?>
                             </a>
                         </li>
                        <?php endforeach; ?>
@@ -126,13 +123,11 @@ use \app\modules\orderList\services\ServiceCounter;
         <?php endforeach;?>
         </tbody>
     </table>
-    <!--  Окончание таблицы  -->
     <ul class="nav nav-tabs p-b">
         <li>
             <?= LinkPager::widget(['pagination' => $dataProvider->pagination]) ?>
         </li>
         <li class="pull-right">
-            <!-- Выводим количество записей-->
             <?=(new PageCounterService())->createCounter($dataProvider);?>
         </li>
     </ul>

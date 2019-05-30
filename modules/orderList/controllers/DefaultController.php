@@ -14,7 +14,6 @@ use yii\web\Response;
  */
 class DefaultController extends Controller
 {
-
     /**
      * @return string
      * @throws \yii\db\Exception

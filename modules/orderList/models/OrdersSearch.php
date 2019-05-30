@@ -85,7 +85,7 @@ class OrdersSearch extends Orders
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = Orders::find();
+        $query = Orders::find()->with('services');
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [

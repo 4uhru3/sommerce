@@ -1,4 +1,7 @@
 <?php
+/**
+ * @var $orders app\modules\orderList\models\Orders
+ */
 
 use yii\helpers\Url;
 
