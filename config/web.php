@@ -12,7 +12,7 @@ if (file_exists($localParams)) {
         require __DIR__ . '/params-local.php'
     );
 }
-if (file_exists($localParams)) {
+if (file_exists($localDB)) {
     $db = array_merge(
         require __DIR__ . '/db.php',
         require __DIR__ . '/db-local.php'

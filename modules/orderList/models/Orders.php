@@ -74,12 +74,14 @@ class Orders extends ActiveRecord
      */
     public function getServiceCount():array
     {
-        return self::find()
-            ->select(['COUNT(*) as cnt'])
+        $serviceCount = self::find()
+            ->select(['services.id', 'COUNT(*) as cnt'])
             ->joinWith('services')
             ->groupBy(['services.id'])
             ->createCommand()
             ->queryAll();
+
+        return $serviceCount = ArrayHelper::map($serviceCount, 'id', 'cnt');
     }
 
     /**

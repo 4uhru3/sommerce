@@ -112,7 +112,7 @@ use \app\modules\orderList\services\ServiceCounter;
             <td><?= $model->user?></td>
             <td><?=Html::a($model->link, $model->link)?></td>
             <td><?= $model->quantity?></td>
-            <td><span class="label-id"><?=$serviceCount[$model->services->id-1]['cnt']?></span>
+            <td><span class="label-id"><?=$serviceCount[$model->services->id]?></span>
                 <?=$model->services->name?></td>
             <td><?=$orders->getStatusName($model->status)?></td>
             <td><?=$orders->getModeName($model->mode)?></td>
