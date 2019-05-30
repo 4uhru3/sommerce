@@ -1,15 +1,23 @@
 <?php
 
-$params = array_merge(
-    require __DIR__ . '/params.php',
-    require __DIR__ . '/params-local.php'
-    );
+$localParams = __DIR__ . '/params-local.php';
+$localDB = __DIR__ . '/db-local.php';
 
-$db = array_merge(
-    require __DIR__ . '/db.php',
-    require __DIR__ . '/db-local.php'
+$params = require __DIR__ . '/params.php';
+$db = require __DIR__ . '/db.php';
+
+if (file_exists($localParams)) {
+    $params = array_merge(
+        require __DIR__ . '/params.php',
+        require __DIR__ . '/params-local.php'
     );
-    
+}
+if (file_exists($localParams)) {
+    $db = array_merge(
+        require __DIR__ . '/db.php',
+        require __DIR__ . '/db-local.php'
+    );
+}
 
 $config = [
     'id' => 'basic',
@@ -30,20 +38,11 @@ $config = [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => '-V2tqDIgWN4iQ0_Q7poua_XHQSa1BIKh',
         ],
-        'cache' => [
-            'class' => 'yii\caching\FileCache',
-        ],
 
         'errorHandler' => [
             'errorAction' => 'default/error',
         ],
-        'mailer' => [
-            'class' => 'yii\swiftmailer\Mailer',
-            // send all mails to a file by default. You have to set
-            // 'useFileTransport' to false and configure a transport
-            // for the mailer to send real emails.
-            'useFileTransport' => true,
-        ],
+
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
@@ -65,13 +64,8 @@ $config = [
                 ],
             ],
         ],
-        'contentNegotiator' => [
-            'class' => 'yii\filters\ContentNegotiator',
-            'languages' => ['en', 'ru'],
-        ],
     ],
     'params' => $params,
-
     'modules' => [
         'orderList' => [
             'class' => 'app\modules\orderList\OrderListModule',
