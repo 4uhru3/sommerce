@@ -2,6 +2,7 @@
 
 /**
  * @var $this yii\web\View
+ * @var $serviceCount
  * @var $orders app\modules\orderList\models\Orders
  * @var $dataProvider yii\data\ActiveDataProvider
  */
@@ -114,7 +115,7 @@ use \app\modules\orderList\services\ServiceCounter;
             <td><?= $model->user?></td>
             <td><?=Html::a($model->link, $model->link)?></td>
             <td><?= $model->quantity?></td>
-            <td><span class="label-id"><?=implode('',$orders->getServiceCount([$model->services->id]))?></span>
+            <td><span class="label-id"><?=$serviceCount[$model->services->id-1]['cnt']?></span>
                 <?=$model->services->name?></td>
             <td><?=$orders->getStatusName($model->status)?></td>
             <td><?=$orders->getModeName($model->mode)?></td>
