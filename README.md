@@ -29,7 +29,7 @@ composer install
 
 ### DB Connection
 
-rename test_db.php -> db.php
+change db_name, user, and password in config/db.php
 
 ### Run database migration
 
