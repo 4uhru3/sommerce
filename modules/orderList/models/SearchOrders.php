@@ -11,6 +11,8 @@ use yii\data\ActiveDataProvider;
  */
 class SearchOrders extends Orders
 {
+    const PAGE_SIZE = 100;
+
     public $searchColumn;
     public $searchValue;
 
@@ -76,7 +78,7 @@ class SearchOrders extends Orders
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => Orders::PAGE_SIZE
+                'pageSize' => self::PAGE_SIZE
             ],
             'sort' => [
                 'defaultOrder' => ['id' => SORT_DESC]

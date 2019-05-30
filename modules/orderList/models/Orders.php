@@ -12,7 +12,6 @@ use Yii;
  */
 class Orders extends ActiveRecord
 {
-    const PAGE_SIZE = 100;
     const MODE_ALL = null;
     const MODE_AUTO = 1;
     const MODE_MANUAL = 2;
