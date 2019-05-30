@@ -4,6 +4,7 @@ namespace app\modules\orderList\models;
 
 use yii\db\ActiveRecord;
 use yii\db\ActiveQuery;
+use yii\helpers\ArrayHelper;
 use Yii;
 
 /**
@@ -15,6 +16,7 @@ class Orders extends ActiveRecord
     const MODE_ALL = null;
     const MODE_AUTO = 1;
     const MODE_MANUAL = 2;
+
     const STATUS_ALL_ORDERS = null;
     const STATUS_PENDING = 1;
     const STATUS_IN_PROGRESS = 2;
@@ -55,7 +57,7 @@ class Orders extends ActiveRecord
      * @return array
      * @throws \yii\db\Exception
      */
-    public static function getUniqueServiceCountList(): array
+    public function getUniqueServiceCountList(): array
     {
         return self::find()
             ->select(['services.id','services.name','COUNT(*) AS cnt'])
@@ -71,7 +73,7 @@ class Orders extends ActiveRecord
      * @return array
      * @throws \yii\db\Exception
      */
-    public static function getServiceCount($id): array
+    public function getServiceCount($id): array
     {
         return self::find()
             ->select(['COUNT(*) AS cnt'])
@@ -85,40 +87,30 @@ class Orders extends ActiveRecord
     /**
      * @return array
      */
-    public static function getModeLabel(): array
+    public function getModeLabel(): array
     {
-        $mode = [
+        return [
             self::MODE_ALL => 'All',
             self::MODE_AUTO => 'Auto',
             self::MODE_MANUAL => 'Manual',
         ];
-
-        return $mode;
     }
 
     /**
      * @param $id
      * @return string
      */
-    public static function getModeName($id): string
+    public function getModeName($id): string
     {
-        $result = '';
-        $mode = self::getModeLabel();
-        foreach ($mode as $key => $value){
-            if($key == $id){
-                $result = $value;
-            }
-        }
-
-        return Yii::t('app', $result);
+        return Yii::t('app', ArrayHelper::getValue(self::getModeLabel(), $id));
     }
 
     /**
      * @return array
      */
-    public static function getStatusLabel(): array
+    public function getStatusLabel(): array
     {
-        $status = [
+        return [
             self::STATUS_ALL_ORDERS => 'All orders',
             self::STATUS_PENDING => 'Pending',
             self::STATUS_IN_PROGRESS => 'In progress',
@@ -126,25 +118,15 @@ class Orders extends ActiveRecord
             self::STATUS_CANCELED => 'Canceled',
             self::STATUS_ERROR => 'Error'
         ];
-
-        return $status;
     }
 
     /**
      * @param $id
      * @return string
      */
-    public static function getStatusName($id): string
+    public function getStatusName($id): string
     {
-        $result = '';
-        $status = self::getStatusLabel();
-        foreach ($status as $key => $value){
-            if($key == $id){
-                $result = $value;
-            }
-        }
-
-        return Yii::t('app', $result);
+        return Yii::t('app', ArrayHelper::getValue(self::getStatusLabel(), $id));
     }
 
     /**
@@ -152,7 +134,7 @@ class Orders extends ActiveRecord
      * @return string
      * @throws \yii\base\InvalidConfigException
      */
-    public static function getDate($date): string
+    public function getDate($date): string
     {
        return Yii::$app->formatter->asDate($date);
     }
@@ -162,7 +144,7 @@ class Orders extends ActiveRecord
      * @return string
      * @throws \yii\base\InvalidConfigException
      */
-    public static function getTime($date): string
+    public function getTime($date): string
     {
         return Yii::$app->formatter->asTime($date);
     }

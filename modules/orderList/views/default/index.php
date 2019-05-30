@@ -12,13 +12,11 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
 use \app\modules\orderList\services\ServiceCounter;
-use app\modules\orderList\models\Orders;
 
 ?>
-
 <div class="container-fluid">
     <ul class="nav nav-tabs p-b">
-        <?= $this->render('_navigation', ['params' => $params]) ?>
+        <?= $this->render('_navigation', ['params' => $params, 'orders' => $orders]) ?>
         <li class="pull-right custom-search">
             <?= $this->render('_search', ['params' => $params]) ?>
         </li>
@@ -66,21 +64,18 @@ use app\modules\orderList\models\Orders;
                                     ])
                             )?>
                         </li>
-                        <?php
-                        foreach (Orders::getUniqueServiceCountList() as $service)
-                        {
-                            echo Html::tag('li',
-                                    Html::a('<span class="label-id">' . $service['cnt'] . '</span>' .  Yii::t('app', $service['name']),
-                                            Url::to([
-                                                'index',
+                        <?php foreach ($orders->getUniqueServiceCountList() as $service):?>
+                        <li>
+                            <a href=<?= Url::to(['index',
                                                 'service_id' => $service['id'],
                                                 'mode' => $params['mode'],
                                                 'status' => $params['status']
-                                            ])
-                                    )
-                            );
-                        }
-                        ?>
+                                            ])?>>
+                               <span class="label-id"><?=$service['cnt']?></span>
+                                   <?=Yii::t('app', $service['name'])?>
+                            </a>
+                        </li>
+                       <?php endforeach; ?>
                     </ul>
                 </div>
             </th>
@@ -93,19 +88,16 @@ use app\modules\orderList\models\Orders;
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <?php
-                        foreach (Orders::getModeLabel() as $key => $value) {
-                            echo '<li>';
-                            echo Html::a(Orders::getModeName($key),
-                                 Url::to([
-                                    'index',
-                                    'mode' => $key,
-                                    'service_id' => $params['service_id'],
-                                    'status' => $params['status']
-                                ]));
-                            echo '</li>';
-                        }
-                        ?>
+                        <?php foreach ($orders->getModeLabel() as $key => $value):?>
+                            <li><?=Html::a($orders->getModeName($key),
+                                       Url::to([
+                                           'index',
+                                           'mode' => $key,
+                                           'service_id' => $params['service_id'],
+                                           'status' => $params['status']
+                                       ]))?>
+                            </li>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
             </th>
@@ -115,24 +107,21 @@ use app\modules\orderList\models\Orders;
         </tr>
         </thead>
         <tbody>
-        <?php
-        foreach ($dataProvider->getModels() as $model)
-        {
-            echo '<tr>';
-            echo('<td>' . $model->id . '</td>');
-            echo('<td>' . $model->user . '</td>');
-            echo('<td>' . Html::a($model->link, $model->link) . '</td>');
-            echo('<td>' . $model->quantity . '</td>');
-            echo('<td><span class="label-id">' . implode('', Orders::getServiceCount($model->services->id)) .
-                '</span> ' . $model->services->name . '</td>');
-            echo('<td>' . Orders::getStatusName($model->status) . '</td>');
-            echo('<td>' . Orders::getModeName($model->mode) . '</td>');
-            echo('<td><span class="nowrap">' . Orders::getDate($model->created_at) .
-                '</span><span class="nowrap">' . Orders::getTime($model->created_at) .
-                '</span></td>');
-            echo '</tr>';
-        }
-        ?>
+        <?php foreach ($dataProvider->getModels() as $model): ?>
+            <tr>
+            <td><?= $model->id?></td>
+            <td><?= $model->user?></td>
+            <td><?=Html::a($model->link, $model->link)?></td>
+            <td><?= $model->quantity?></td>
+            <td><span class="label-id"><?= implode('', $orders->getServiceCount($model->services->id))?></span>
+                <?=$model->services->name?></td>
+            <td><?=$orders->getStatusName($model->status)?></td>
+            <td><?=$orders->getModeName($model->mode)?></td>
+            <td><span class="nowrap"><?=$orders->getDate($model->created_at)?>
+                </span><span class="nowrap"><?=$orders->getTime($model->created_at)?>
+                </span></td>
+            </tr>
+        <?php endforeach;?>
         </tbody>
     </table>
     <!--  Окончание таблицы  -->

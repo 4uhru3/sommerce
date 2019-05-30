@@ -2,6 +2,7 @@
 
 namespace app\modules\orderList\controllers;
 
+use app\modules\orderList\models\Orders;
 use app\modules\orderList\models\OrdersSearch;
 use yii\web\Controller;
 use Yii;
@@ -18,6 +19,7 @@ class DefaultController extends Controller
      */
     public function actionIndex(): string
     {
+        $orders = new Orders();
         $searchModel = new OrdersSearch();
         $params = Yii::$app->request->get();
         $dataProvider = $searchModel->search($params);
@@ -25,6 +27,7 @@ class DefaultController extends Controller
 
         return $this->render('index', [
                 'dataProvider' => $dataProvider,
+                'orders' => $orders,
                 'params' => $params,
             ]
         );

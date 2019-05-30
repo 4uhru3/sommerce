@@ -1,29 +1,40 @@
 <?php
 
 use yii\widgets\ActiveForm;
+use yii\helpers\Html;
+use \app\modules\orderList\models\OrdersSearch;
 
 ?>
+
 <body>
-<form class="form-inline">
+<div class="form-inline">
+<?php $form = ActiveForm::begin([
+    'action' => ['index'],
+    'method' => 'get',
+]); ?>
     <div class="input-group">
-        <?php $form = ActiveForm::begin([
-            'action' => ['index'],
-            'method' => 'get',
-        ]); ?>
-        <input type="text" class="form-control" name="searchValue"
-               placeholder="<?= Yii::t('app', 'Search text')?>">
+        <?= html::input(
+                'text',
+                'searchValue',
+                '',
+                [
+                'class' => 'form-control',
+                'placeholder' => Yii::t('app', 'Search text')
+                ])?>
         <input type="hidden" name="status" value="<?=$params['status']?>">
         <span class="input-group-btn search-select-wrap">
                     <select class="form-control search-select" name="searchColumn">
-                        <option value="id" selected=""><?= Yii::t('app', 'Order ID')?></option>
-                        <option value="link"><?= Yii::t('app', 'Link')?></option>
-                        <option value="user"><?= Yii::t('app', 'Username')?></option>
+                        <?php foreach (OrdersSearch::SEARCH_COLUMN_VALUE as $key => $value):?>
+                            <option value=<?=$key?>><?= OrdersSearch::getSearchColumnOptionName($key)?></option>
+                        <?php endforeach;?>
                     </select>
-            <button type="submit" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"  aria-hidden="true"></span>
-            </button>
+            <?= html::submitButton(
+                    '<span class="glyphicon glyphicon-search"  aria-hidden="true"></span>', [
+                        'type' => 'submit',
+                        'class' => 'btn btn-default'
+                    ])?>
         </span>
-        <?php ActiveForm::end()?>
     </div>
-</form>
+<?php ActiveForm::end()?>
+</div>
 </body>
