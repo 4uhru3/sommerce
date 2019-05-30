@@ -35,9 +35,21 @@ class m190527_084740_modify_keys extends Migration
      */
     public function safeDown()
     {
-        echo "m190527_084740_modify_keys cannot be reverted.\n";
+        $orders = (new Query())
+            ->select('*')
+            ->from('orders')
+            ->all();
 
-        return false;
+        foreach ($orders as $order) {
+            $modeId = (int)$order['mode'] - 1;
+            $statusId = (int)$order['status'] - 1;
+
+            $this->update(
+                'orders',
+                ['mode' => $modeId, 'status' => $statusId],
+                ['id' => $order['id']]
+            );
+        }
     }
 
     /*

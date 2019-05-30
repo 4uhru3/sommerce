@@ -37,9 +37,10 @@ class m190527_082503_load_from_dump extends Migration
      */
     public function safeDown()
     {
-        echo "m190527_082503_load_from_dump cannot be reverted.\n";
-
-        return false;
+        $this->dropForeignKey('fk-orders-status_id','orders');
+        $this->dropIndex('idx-orders-status_id', 'orders');
+        $this->dropTable('services');
+        $this->dropTable('orders');
     }
 
     /*

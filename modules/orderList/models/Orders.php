@@ -68,12 +68,13 @@ class Orders extends ActiveRecord
             ->queryAll();
     }
 
+
     /**
      * @param $id
      * @return array
      * @throws \yii\db\Exception
      */
-    public function getServiceCount($id): array
+    public function getServiceCount($id):array
     {
         return self::find()
             ->select(['COUNT(*) AS cnt'])

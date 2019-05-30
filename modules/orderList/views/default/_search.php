@@ -9,7 +9,7 @@ use \app\modules\orderList\models\OrdersSearch;
 <body>
 <div class="form-inline">
 <?php $form = ActiveForm::begin([
-    'action' => ['index'],
+    'action' => ['index', 'status' => $params['status']],
     'method' => 'get',
 ]); ?>
     <div class="input-group">
@@ -21,7 +21,6 @@ use \app\modules\orderList\models\OrdersSearch;
                 'class' => 'form-control',
                 'placeholder' => Yii::t('app', 'Search text')
                 ])?>
-        <input type="hidden" name="status" value="<?=$params['status']?>">
         <span class="input-group-btn search-select-wrap">
                     <select class="form-control search-select" name="searchColumn">
                         <?php foreach (OrdersSearch::SEARCH_COLUMN_VALUE as $key => $value):?>
