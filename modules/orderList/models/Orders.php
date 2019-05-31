@@ -44,10 +44,10 @@ class Orders extends ActiveRecord
      * @return array
      * @throws \yii\db\Exception
      */
-    public function getTotalCount(): array
+    protected function getTotalCount(): array
     {
         return $this::find()
-            ->select(['count(*) as serviceCount'])
+            ->select(['count(*) as cnt'])
             ->joinWith('services')
             ->createCommand()
             ->queryAll();
@@ -57,7 +57,7 @@ class Orders extends ActiveRecord
      * @return array
      * @throws \yii\db\Exception
      */
-    public function getUniqueServiceCountList(): array
+    protected function getUniqueServiceCountList(): array
     {
         return self::find()
             ->select(['services.id','services.name','COUNT(*) AS cnt'])
@@ -66,6 +66,31 @@ class Orders extends ActiveRecord
             ->orderBy('cnt', 'DESC')
             ->createCommand()
             ->queryAll();
+    }
+
+    /**
+     * @return array
+     * @throws \yii\db\Exception
+     */
+    public function servicesFilter(){
+        $all = [
+            [
+            'id' => null,
+            'name' => 'All',
+            'cnt' => ArrayHelper::getValue($this->getTotalCount(), '0.cnt'),
+            'is_active' => true
+            ]
+        ];
+        $filters = [];
+        foreach ($this->getUniqueServiceCountList() as $serviceList) {
+            $filters[] = [
+                        'id' => $serviceList['id'],
+                        'name' => $serviceList['name'],
+                        'cnt' => $serviceList['cnt'],
+                        'is_active' => false
+                       ];
+            }
+        return array_merge($all, $filters);
     }
 
     /**

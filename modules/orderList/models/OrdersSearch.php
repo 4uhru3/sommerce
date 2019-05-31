@@ -5,6 +5,7 @@ namespace app\modules\orderList\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\debug\models\timeline\DataProvider;
 use yii\helpers\ArrayHelper;
 
 /**

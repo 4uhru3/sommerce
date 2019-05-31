@@ -18,7 +18,7 @@ class ServiceCounter
     {
         $serviceTotal = (new Orders())->getTotalCount();
         foreach ($serviceTotal as $value) {
-            $serviceTotal = ($value['serviceCount']);
+            $serviceTotal = ($value['cnt']);
         }
         return $serviceTotal;
     }

@@ -5,6 +5,7 @@
  * @var $serviceCount
  * @var $orders app\modules\orderList\models\Orders
  * @var $dataProvider yii\data\ActiveDataProvider
+ * @var $params
  */
 
 $this->title = 'Order List "Sommerce"';
@@ -25,17 +26,7 @@ use \app\modules\orderList\services\ServiceCounter;
     </ul>
     <ul class="p-b nav">
         <li class="pull-right custom-search">
-            <?= Html::a(
-                Yii::t('app', 'Export'),
-                    Url::to([
-                        'download',
-                        'mode' => $params['mode'],
-                        'service_id' => $params['service_id'],
-                        'status' => $params['status'],
-                        'searchColumn' => $params['searchColumn'],
-                        'searchValue' => $params['searchValue']
-                    ])
-                )?>
+            <?= Html::a(Yii::t('app', 'Export'), array_merge(['download'], $params)) ?>
         </li>
     </ul>
     <table class="table order-table">
@@ -53,25 +44,16 @@ use \app\modules\orderList\services\ServiceCounter;
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li class="active">
-                            <?= Html::a('All ' . ServiceCounter::countTotalServices(),
-                                Url::to([
-                                    'index',
-                                    'service_id' => null,
-                                    'mode' => $params['mode'],
-                                    'status' => $params['status']
-                                    ])
-                            )?>
-                        </li>
-                        <?php foreach ($orders->getUniqueServiceCountList() as $service):?>
-                        <li>
+                        <?php foreach ($orders->servicesFilter() as $service): ?>
+                            <?php ($service['is_active'] == true) ? $cssClass = 'active' : $cssClass = null; ?>
+                        <li class=<?= $cssClass ?>>
                             <a href=<?= Url::to(['index',
                                                 'service_id' => $service['id'],
                                                 'mode' => $params['mode'],
                                                 'status' => $params['status']
-                                            ])?>>
-                                <span class="label-id"><?=$service['cnt']?></span>
-                                <?=Yii::t('app', $service['name'])?>
+                                            ]) ?>>
+                                <span class="label-id"><?= $service['cnt'] ?></span>
+                                <?= Yii::t('app', $service['name']) ?>
                             </a>
                         </li>
                        <?php endforeach; ?>
@@ -87,14 +69,13 @@ use \app\modules\orderList\services\ServiceCounter;
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <?php foreach ($orders->getModeLabel() as $key => $value):?>
-                            <li><?=Html::a($orders->getModeName($key),
-                                       Url::to([
-                                           'index',
-                                           'mode' => $key,
-                                           'service_id' => $params['service_id'],
-                                           'status' => $params['status']
-                                       ]))?>
+                        <?php foreach ($orders->getModeLabel() as $mode => $value): ?>
+                            <li><?= Html::a($orders->getModeName($mode), [
+                                    'index',
+                                    'mode' => $mode,
+                                    'service_id' => $params['service_id'],
+                                    'status' => $params['status']
+                                ]) ?>
                             </li>
                         <?php endforeach; ?>
                     </ul>
@@ -106,21 +87,21 @@ use \app\modules\orderList\services\ServiceCounter;
         </tr>
         </thead>
         <tbody>
-        <?php foreach ($dataProvider->getModels() as $model): ?>
+        <?php foreach ($dataProvider->getModels() as $order): ?>
             <tr>
-            <td><?= $model->id?></td>
-            <td><?= $model->user?></td>
-            <td><?=Html::a($model->link, $model->link)?></td>
-            <td><?= $model->quantity?></td>
-            <td><span class="label-id"><?=$serviceCount[$model->services->id]?></span>
-                <?=$model->services->name?></td>
-            <td><?=$orders->getStatusName($model->status)?></td>
-            <td><?=$orders->getModeName($model->mode)?></td>
-            <td><span class="nowrap"><?=$orders->getDate($model->created_at)?>
-                </span><span class="nowrap"><?=$orders->getTime($model->created_at)?>
+            <td><?= $order->id ?></td>
+            <td><?= $order->user ?></td>
+            <td><?=Html::a($order->link, $order->link) ?></td>
+            <td><?= $order->quantity ?></td>
+            <td><span class="label-id"><?= $serviceCount[$order->services->id] ?></span>
+                <?= $order->services->name ?></td>
+            <td><?= $orders->getStatusName($order->status) ?></td>
+            <td><?= $orders->getModeName($order->mode) ?></td>
+            <td><span class="nowrap"><?= $orders->getDate($order->created_at) ?>
+                </span><span class="nowrap"><?= $orders->getTime($order->created_at) ?>
                 </span></td>
             </tr>
-        <?php endforeach;?>
+        <?php endforeach; ?>
         </tbody>
     </table>
     <ul class="nav nav-tabs p-b">
@@ -128,7 +109,7 @@ use \app\modules\orderList\services\ServiceCounter;
             <?= LinkPager::widget(['pagination' => $dataProvider->pagination]) ?>
         </li>
         <li class="pull-right">
-            <?=(new PageCounterService())->createCounter($dataProvider);?>
+            <?= (new PageCounterService())->createCounter($dataProvider); ?>
         </li>
     </ul>
 </div>
