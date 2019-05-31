@@ -10,6 +10,6 @@ use yii\helpers\Html;
 <?php foreach ($orders->getStatusLabel() as $status => $value): ?>
     <?php ($params['status'] == $status) ? $cssClass = 'active' : $cssClass = null; ?>
 <li class =<?= $cssClass ?>>
-    <?= Html::a($orders->getStatusName($status), ['index', 'status' => $status])?>
+    <?= Html::a($value, ['index', 'status' => $status])?>
 </li>
 <?php endforeach; ?>

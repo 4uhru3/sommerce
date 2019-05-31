@@ -16,13 +16,13 @@ class m190527_082503_load_from_dump extends Migration
         Yii::$app->db->createCommand($sql)->execute();
 
         $this->createIndex(
-            'idx-orders-status_id',
+            'idx-orders-service_id',
             'orders',
             'service_id'
         );
 
         $this->addForeignKey(
-            'fk_orders_status_id',
+            'fk_orders_service_id',
             'orders',
             'service_id',
             'services',
@@ -36,8 +36,8 @@ class m190527_082503_load_from_dump extends Migration
      */
     public function safeDown()
     {
-        $this->dropForeignKey('fk_orders_status_id','orders');
-        $this->dropIndex('idx-orders-status_id', 'orders');
+        $this->dropForeignKey('fk_orders_service_id','orders');
+        $this->dropIndex('idx-orders-service_id', 'orders');
         $this->dropTable('services');
         $this->dropTable('orders');
     }

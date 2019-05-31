@@ -44,7 +44,7 @@ class Orders extends ActiveRecord
      * @return array
      * @throws \yii\db\Exception
      */
-    protected function getTotalCount(): array
+    public function getTotalCount(): array
     {
         return $this::find()
             ->select(['count(*) as cnt'])
@@ -72,7 +72,8 @@ class Orders extends ActiveRecord
      * @return array
      * @throws \yii\db\Exception
      */
-    public function servicesFilter(){
+    public function servicesFilter(): array
+    {
         $all = [
             [
             'id' => null,
@@ -81,32 +82,33 @@ class Orders extends ActiveRecord
             'is_active' => true
             ]
         ];
-        $filters = [];
+        $services = [];
         foreach ($this->getUniqueServiceCountList() as $serviceList) {
-            $filters[] = [
+            $services[] = [
                         'id' => $serviceList['id'],
                         'name' => $serviceList['name'],
                         'cnt' => $serviceList['cnt'],
                         'is_active' => false
                        ];
             }
-        return array_merge($all, $filters);
+        return array_merge($all, $services);
     }
 
     /**
      * @return array
      * @throws \yii\db\Exception
      */
-    public function getServiceCount(): array
+    public function getServicesTotalCount()
     {
-        $serviceCount = self::find()
-            ->select(['services.id', 'COUNT(*) as cnt'])
-            ->joinWith('services')
-            ->groupBy(['services.id'])
+        $result = self::find()
+            ->select(['service_id', 'COUNT(*) as cnt'])
+            ->groupBy('service_id')
             ->createCommand()
             ->queryAll();
 
-        return $serviceCount = ArrayHelper::map($serviceCount, 'id', 'cnt');
+        $result = ArrayHelper::map($result, 'service_id', 'cnt');
+
+        return ArrayHelper::getValue($result,$this->service_id);
     }
 
     /**
@@ -115,9 +117,9 @@ class Orders extends ActiveRecord
     public function getModeLabel(): array
     {
         return [
-            self::MODE_ALL => 'All',
-            self::MODE_AUTO => 'Auto',
-            self::MODE_MANUAL => 'Manual',
+            self::MODE_ALL => Yii::t('app','All'),
+            self::MODE_AUTO => Yii::t('app','Auto'),
+            self::MODE_MANUAL => Yii::t('app','Manual'),
         ];
     }
 
@@ -125,9 +127,9 @@ class Orders extends ActiveRecord
      * @param $id
      * @return string
      */
-    public function getModeName($id): string
+    public function getModeName(): string
     {
-        return Yii::t('app', ArrayHelper::getValue(self::getModeLabel(), $id));
+        return Yii::t('app', ArrayHelper::getValue(self::getModeLabel(),$this->mode));
     }
 
     /**
@@ -136,12 +138,12 @@ class Orders extends ActiveRecord
     public function getStatusLabel(): array
     {
         return [
-            self::STATUS_ALL_ORDERS => 'All orders',
-            self::STATUS_PENDING => 'Pending',
-            self::STATUS_IN_PROGRESS => 'In progress',
-            self::STATUS_COMPLETED => 'Completed',
-            self::STATUS_CANCELED => 'Canceled',
-            self::STATUS_ERROR => 'Error'
+            self::STATUS_ALL_ORDERS => Yii::t('app','All orders'),
+            self::STATUS_PENDING => Yii::t('app','Pending'),
+            self::STATUS_IN_PROGRESS => Yii::t('app','In progress'),
+            self::STATUS_COMPLETED => Yii::t('app','Completed'),
+            self::STATUS_CANCELED => Yii::t('app','Canceled'),
+            self::STATUS_ERROR => Yii::t('app','Error')
         ];
     }
 
@@ -149,9 +151,9 @@ class Orders extends ActiveRecord
      * @param $id
      * @return string
      */
-    public function getStatusName($id): string
+    public function getStatusName(): string
     {
-        return Yii::t('app', ArrayHelper::getValue(self::getStatusLabel(), $id));
+        return Yii::t('app', ArrayHelper::getValue(self::getStatusLabel(), $this->status));
     }
 
     /**
@@ -159,9 +161,9 @@ class Orders extends ActiveRecord
      * @return string
      * @throws \yii\base\InvalidConfigException
      */
-    public function getDate($date): string
+    public function getDate(): string
     {
-       return Yii::$app->formatter->asDate($date);
+       return Yii::$app->formatter->asDate($this->created_at);
     }
 
     /**
@@ -169,8 +171,8 @@ class Orders extends ActiveRecord
      * @return string
      * @throws \yii\base\InvalidConfigException
      */
-    public function getTime($date): string
+    public function getTime(): string
     {
-        return Yii::$app->formatter->asTime($date);
+        return Yii::$app->formatter->asTime($this->created_at);
     }
 }

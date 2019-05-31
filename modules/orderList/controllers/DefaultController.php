@@ -25,12 +25,11 @@ class DefaultController extends Controller
         $params = Yii::$app->request->get();
         $dataProvider = $searchModel->search($params);
         $params = $searchModel->getParams();
-        $serviceCount = $orders->getServiceCount();
 
         return $this->render(
             'index',
             [
-             'serviceCount' => $serviceCount,
+             //'serviceCount' => $serviceCount,
              'dataProvider' => $dataProvider,
              'orders' => $orders,
              'params' => $params,

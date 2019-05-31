@@ -4,9 +4,8 @@ namespace app\modules\orderList\models;
 
 use Yii;
 use yii\base\Model;
-use yii\data\ActiveDataProvider;
-use yii\debug\models\timeline\DataProvider;
 use yii\helpers\ArrayHelper;
+use yii\data\ActiveDataProvider;
 
 /**
  * OrdersSearch represents the model behind the search form of `app\modules\orderList\models\Orders`.
@@ -102,10 +101,10 @@ class OrdersSearch extends Orders
             return $dataProvider;
         }
 
-        $query->andFilterWhere([$this->searchColumn => $this->searchValue]);
-        $query->andFilterWhere(['service_id' => $this->service_id]);
-        $query->andFilterWhere(['status' => $this->status]);
-        $query->andFilterWhere(['mode' => $this->mode]);
+        $query->andFilterWhere([$this->searchColumn => $this->searchValue])
+              ->andFilterWhere(['service_id' => $this->service_id])
+              ->andFilterWhere(['status' => $this->status])
+              ->andFilterWhere(['mode' => $this->mode]);
 
         return $dataProvider;
     }
@@ -131,9 +130,9 @@ class OrdersSearch extends Orders
                 ';' . $value->link .
                 ';' . $value->quantity .
                 ';' . $value->services->name .
-                ';' . self::getStatusName($value->status) .
-                ';' . self::getModeName($value->mode) .
-                ';' . self::getDate($value->created_at) . "/" . self::getTime($value->created_at) .
+                ';' . $value->statusName .
+                ';' . $value->modeName .
+                ';' . $value->date . "/" . $value->time .
                 "\r\n";
         }
         return $data;

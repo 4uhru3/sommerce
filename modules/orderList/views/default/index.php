@@ -14,7 +14,6 @@ use app\modules\orderList\services\PageCounterService;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
-use \app\modules\orderList\services\ServiceCounter;
 
 ?>
 <div class="container-fluid">
@@ -70,7 +69,7 @@ use \app\modules\orderList\services\ServiceCounter;
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                         <?php foreach ($orders->getModeLabel() as $mode => $value): ?>
-                            <li><?= Html::a($orders->getModeName($mode), [
+                            <li><?= Html::a($value, [
                                     'index',
                                     'mode' => $mode,
                                     'service_id' => $params['service_id'],
@@ -91,14 +90,14 @@ use \app\modules\orderList\services\ServiceCounter;
             <tr>
             <td><?= $order->id ?></td>
             <td><?= $order->user ?></td>
-            <td><?=Html::a($order->link, $order->link) ?></td>
+            <td><?= Html::a($order->link, $order->link) ?></td>
             <td><?= $order->quantity ?></td>
-            <td><span class="label-id"><?= $serviceCount[$order->services->id] ?></span>
+            <td><span class="label-id"><?= $order->servicesTotalCount ?></span>
                 <?= $order->services->name ?></td>
-            <td><?= $orders->getStatusName($order->status) ?></td>
-            <td><?= $orders->getModeName($order->mode) ?></td>
-            <td><span class="nowrap"><?= $orders->getDate($order->created_at) ?>
-                </span><span class="nowrap"><?= $orders->getTime($order->created_at) ?>
+            <td><?= $order->statusName ?></td>
+            <td><?= $order->modeName ?></td>
+            <td><span class="nowrap"><?= $order->date ?>
+                </span><span class="nowrap"><?= $order->time ?>
                 </span></td>
             </tr>
         <?php endforeach; ?>

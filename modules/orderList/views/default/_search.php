@@ -29,7 +29,7 @@ use \app\modules\orderList\models\OrdersSearch;
         <span class="input-group-btn search-select-wrap">
                     <select class="form-control search-select" name="searchColumn">
                         <?php foreach (OrdersSearch::SEARCH_COLUMN_VALUE as $searchColumn => $value): ?>
-                            <?php ($params['searchColumn'] == $searchColumn) ? $selected = 'selected=' : $selected = null; ?>
+                            <?php ($params['searchColumn'] == $searchColumn) ? $selected = ' selected' : $selected = null; ?>
                             <option value=<?= $searchColumn ?><?= $selected ?>><?= OrdersSearch::getSearchColumnOptionName($searchColumn) ?></option>
                         <?php endforeach; ?>
                     </select>
