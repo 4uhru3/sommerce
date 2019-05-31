@@ -50,8 +50,8 @@ class OrdersSearch extends Orders
      * @param $key
      * @return string
      */
-    public static function getSearchColumnOptionName($key){
-
+    public static function getSearchColumnOptionName($key)
+    {
          return Yii::t('app', ArrayHelper::getValue(self::SEARCH_COLUMN_VALUE, $key));
     }
 
@@ -95,9 +95,12 @@ class OrdersSearch extends Orders
                 'defaultOrder' => ['id' => SORT_DESC]
             ]
         ]);
+
         if (!($this->load($params, '') && $this->validate())) {
+
             return $dataProvider;
         }
+
         $query->andFilterWhere([$this->searchColumn => $this->searchValue]);
         $query->andFilterWhere(['service_id' => $this->service_id]);
         $query->andFilterWhere(['status' => $this->status]);
@@ -115,7 +118,9 @@ class OrdersSearch extends Orders
     {
         $dataProvider = (new OrdersSearch)->search($params);
         $dataProvider->setPagination(false);
-        $dataProvider->setSort(['defaultOrder' => ['id' => SORT_DESC]]);
+        $dataProvider->setSort([
+            'defaultOrder' => ['id' => SORT_DESC]
+        ]);
         $model = $dataProvider->getModels();
 
         $data = "ID;User;Link;Quantity;Service;Status;Mode;Created \r\n";

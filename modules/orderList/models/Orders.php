@@ -72,7 +72,7 @@ class Orders extends ActiveRecord
      * @return array
      * @throws \yii\db\Exception
      */
-    public function getServiceCount():array
+    public function getServiceCount(): array
     {
         $serviceCount = self::find()
             ->select(['services.id', 'COUNT(*) as cnt'])

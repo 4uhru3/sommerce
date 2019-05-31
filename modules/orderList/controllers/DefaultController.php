@@ -27,11 +27,13 @@ class DefaultController extends Controller
         $params = $searchModel->getParams();
         $serviceCount = $orders->getServiceCount();
 
-        return $this->render('index', [
-                'serviceCount' => $serviceCount,
-                'dataProvider' => $dataProvider,
-                'orders' => $orders,
-                'params' => $params,
+        return $this->render(
+            'index',
+            [
+             'serviceCount' => $serviceCount,
+             'dataProvider' => $dataProvider,
+             'orders' => $orders,
+             'params' => $params,
             ]
         );
     }
@@ -47,9 +49,13 @@ class DefaultController extends Controller
         $params = yii::$app->request->get();
         $csv = $searchModel->createCSV($params);
 
-        return Yii::$app->response->sendContentAsFile($csv, 'export.csv', [
+        return Yii::$app->response->sendContentAsFile(
+            $csv,
+            'export.csv',
+            [
             'mimeType' => 'application/csv',
             'inline'   => false
-        ]);
+            ]
+        );
     }
 }

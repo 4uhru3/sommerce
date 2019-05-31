@@ -3,27 +3,32 @@
 $localParams = __DIR__ . '/params-local.php';
 $localDB = __DIR__ . '/db-local.php';
 
-$params = require __DIR__ . '/params.php';
-$db = require __DIR__ . '/db.php';
+    if (file_exists($localParams)) {
+        $params = array_merge(
+            require __DIR__ . '/params.php',
+            require __DIR__ . '/params-local.php'
+        );
+    }
+    else{
+        $params = require __DIR__ . '/params.php';
+    }
 
-if (file_exists($localParams)) {
-    $params = array_merge(
-        require __DIR__ . '/params.php',
-        require __DIR__ . '/params-local.php'
-    );
-}
-if (file_exists($localDB)) {
-    $db = array_merge(
-        require __DIR__ . '/db.php',
-        require __DIR__ . '/db-local.php'
-    );
-}
+    if (file_exists($localDB)) {
+        $db = array_merge(
+            require __DIR__ . '/db.php',
+            require __DIR__ . '/db-local.php'
+        );
+    }
+    else{
+        $db = require __DIR__ . '/db.php';
+    }
 
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'language' => 'ru',
+    'defaultRoute' => 'orderList/default/index',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
