@@ -51,19 +51,4 @@ class m190527_084740_modify_keys extends Migration
             );
         }
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m190527_084740_modify_keys cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }
