@@ -2,10 +2,9 @@
 
 /**
  * @var $this yii\web\View
- * @var $serviceCount
- * @var $orders app\modules\orderList\models\Orders
+ * @var $orderModel app\modules\orderList\models\Orders
  * @var $dataProvider yii\data\ActiveDataProvider
- * @var $params
+ * @var $params app\modules\orderList\controllers\DefaultController
  */
 
 $this->title = 'Order List "Sommerce"';
@@ -18,14 +17,14 @@ use yii\widgets\LinkPager;
 ?>
 <div class="container-fluid">
     <ul class="nav nav-tabs p-b">
-        <?= $this->render('_navigation', ['params' => $params, 'orders' => $orders]) ?>
+    <?= $this->render('_navigation', ['params' => $params]) ?>
         <li class="pull-right custom-search">
-            <?= $this->render('_search', ['params' => $params]) ?>
+        <?= $this->render('_search', ['params' => $params]) ?>
         </li>
     </ul>
     <ul class="p-b nav">
         <li class="pull-right custom-search">
-            <?= Html::a(Yii::t('app', 'Export'), array_merge(['download'], $params)) ?>
+        <?= Html::a(Yii::t('app', 'Export'), array_merge(['download'], $params)) ?>
         </li>
     </ul>
     <table class="table order-table">
@@ -39,23 +38,24 @@ use yii\widgets\LinkPager;
                 <div class="dropdown">
                     <button class="btn btn-th btn-default dropdown-toggle" type="button" id="dropdownMenu1"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <?= Yii::t('app', 'Service') ?>
+                    <?= Yii::t('app', 'Service') ?>
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <?php foreach ($orders->servicesFilter() as $service): ?>
-                            <?php ($service['is_active'] == true) ? $cssClass = 'active' : $cssClass = null; ?>
+                    <?php foreach ($orderModel->servicesFilter() as $service): ?>
+                        <?php ($service['is_active'] == true) ? $cssClass = 'active' : $cssClass = null; ?>
                         <li class=<?= $cssClass ?>>
-                            <a href=<?= Url::to(['index',
-                                                'service_id' => $service['id'],
-                                                'mode' => $params['mode'],
-                                                'status' => $params['status']
-                                            ]) ?>>
+                            <a href=<?= Url::to([
+                                            'index',
+                                            'service_id' => $service['id'],
+                                            'mode' => $params['mode'],
+                                            'status' => $params['status']
+                                        ]) ?>>
                                 <span class="label-id"><?= $service['cnt'] ?></span>
                                 <?= Yii::t('app', $service['name']) ?>
                             </a>
                         </li>
-                       <?php endforeach; ?>
+                    <?php endforeach; ?>
                     </ul>
                 </div>
             </th>
@@ -64,24 +64,24 @@ use yii\widgets\LinkPager;
                 <div class="dropdown">
                     <button class="btn btn-th btn-default dropdown-toggle" type="button" id="dropdownMenu1"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <?= Yii::t('app', 'Mode') ?>
+                    <?= Yii::t('app', 'Mode') ?>
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <?php foreach ($orders->getModeLabel() as $mode => $value): ?>
-                            <li><?= Html::a($value, [
+                    <?php foreach ($orderModel->getModeLabel() as $mode => $value): ?>
+                        <li><?= Html::a($value, [
                                     'index',
                                     'mode' => $mode,
                                     'service_id' => $params['service_id'],
                                     'status' => $params['status']
                                 ]) ?>
-                            </li>
-                        <?php endforeach; ?>
+                        </li>
+                    <?php endforeach; ?>
                     </ul>
                 </div>
             </th>
             <th>
-                <?= Yii::t('app', 'Created') ?>
+            <?= Yii::t('app', 'Created') ?>
             </th>
         </tr>
         </thead>
@@ -92,7 +92,7 @@ use yii\widgets\LinkPager;
             <td><?= $order->user ?></td>
             <td><?= Html::a($order->link, $order->link) ?></td>
             <td><?= $order->quantity ?></td>
-            <td><span class="label-id"><?= $order->servicesTotalCount ?></span>
+            <td><span class="label-id"><?= $order->services->ordersCount ?></span>
                 <?= $order->services->name ?></td>
             <td><?= $order->statusName ?></td>
             <td><?= $order->modeName ?></td>
@@ -105,10 +105,10 @@ use yii\widgets\LinkPager;
     </table>
     <ul class="nav nav-tabs p-b">
         <li>
-            <?= LinkPager::widget(['pagination' => $dataProvider->pagination]) ?>
+        <?= LinkPager::widget(['pagination' => $dataProvider->pagination]) ?>
         </li>
         <li class="pull-right">
-            <?= (new PageCounterService())->createCounter($dataProvider); ?>
+        <?= (new PageCounterService())->createCounter($dataProvider); ?>
         </li>
     </ul>
 </div>

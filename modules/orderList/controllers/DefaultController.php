@@ -20,19 +20,15 @@ class DefaultController extends Controller
      */
     public function actionIndex(): string
     {
-        $orders = new Orders();
         $searchModel = new OrdersSearch();
         $params = Yii::$app->request->get();
         $dataProvider = $searchModel->search($params);
-        $params = $searchModel->getParams();
 
         return $this->render(
-            'index',
-            [
-             //'serviceCount' => $serviceCount,
+            'index', [
              'dataProvider' => $dataProvider,
-             'orders' => $orders,
-             'params' => $params,
+             'orderModel' => (new Orders),
+             'params' => $searchModel->params,
             ]
         );
     }
@@ -44,16 +40,14 @@ class DefaultController extends Controller
      */
     public function actionDownload(): Response
     {
-        $searchModel = new OrdersSearch();
         $params = yii::$app->request->get();
-        $csv = $searchModel->createCSV($params);
+        $csv = (new OrdersSearch)->createCSV($params);
 
         return Yii::$app->response->sendContentAsFile(
             $csv,
-            'export.csv',
-            [
-            'mimeType' => 'application/csv',
-            'inline'   => false
+            'export.csv', [
+                'mimeType' => 'application/csv',
+                'inline'   => false
             ]
         );
     }

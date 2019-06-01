@@ -4,7 +4,6 @@ namespace app\modules\orderList\models;
 
 use Yii;
 use yii\base\Model;
-use yii\helpers\ArrayHelper;
 use yii\data\ActiveDataProvider;
 
 /**
@@ -14,11 +13,9 @@ class OrdersSearch extends Orders
 {
     const PAGE_SIZE = 100;
 
-    const SEARCH_COLUMN_VALUE = [
-        'id' => 'Order ID',
-        'link' => 'Link',
-        'user' => 'User'
-    ];
+    const SEARCH_COLUMN_VALUE_ID = 'id';
+    const SEARCH_COLUMN_VALUE_LINK = 'link';
+    const SEARCH_COLUMN_VALUE_USER = 'user';
 
     public $searchColumn;
     public $searchValue;
@@ -47,12 +44,15 @@ class OrdersSearch extends Orders
     }
 
     /**
-     * @param $key
-     * @return string
+     * @return array
      */
-    public static function getSearchColumnOptionName($key)
+    public static function getSearchColumn(): array
     {
-         return Yii::t('app', ArrayHelper::getValue(self::SEARCH_COLUMN_VALUE, $key));
+        return [
+            self::SEARCH_COLUMN_VALUE_ID => Yii::t('app', 'Order ID'),
+            self::SEARCH_COLUMN_VALUE_LINK => Yii::t('app', 'Link'),
+            self::SEARCH_COLUMN_VALUE_USER => Yii::t('app', 'User')
+        ];
     }
 
     /**
@@ -102,9 +102,9 @@ class OrdersSearch extends Orders
         }
 
         $query->andFilterWhere([$this->searchColumn => $this->searchValue])
-              ->andFilterWhere(['service_id' => $this->service_id])
-              ->andFilterWhere(['status' => $this->status])
-              ->andFilterWhere(['mode' => $this->mode]);
+            ->andFilterWhere(['service_id' => $this->service_id])
+            ->andFilterWhere(['status' => $this->status])
+            ->andFilterWhere(['mode' => $this->mode]);
 
         return $dataProvider;
     }
@@ -135,6 +135,7 @@ class OrdersSearch extends Orders
                 ';' . $value->date . "/" . $value->time .
                 "\r\n";
         }
+
         return $data;
     }
 }

@@ -41,29 +41,25 @@ class Orders extends ActiveRecord
     }
 
     /**
-     * @return array
+     * @return string
      * @throws \yii\db\Exception
      */
-    public function getTotalCount(): array
+    public function getTotalCount(): string
     {
-        return $this::find()
-            ->select(['count(*) as cnt'])
-            ->joinWith('services')
-            ->createCommand()
-            ->queryAll();
+        return self::find()->count();
     }
 
     /**
      * @return array
      * @throws \yii\db\Exception
      */
-    protected function getUniqueServiceCountList(): array
+    public function getServiceList(): array
     {
         return self::find()
             ->select(['services.id','services.name','COUNT(*) AS cnt'])
             ->joinWith('services')
             ->groupBy(['services.id','services.name'])
-            ->orderBy('cnt', 'DESC')
+            ->orderBy(['cnt' => SORT_DESC])
             ->createCommand()
             ->queryAll();
     }
@@ -74,41 +70,24 @@ class Orders extends ActiveRecord
      */
     public function servicesFilter(): array
     {
-        $all = [
-            [
+        $all = [[
             'id' => null,
             'name' => 'All',
-            'cnt' => ArrayHelper::getValue($this->getTotalCount(), '0.cnt'),
+            'cnt' => self::getTotalCount(),
             'is_active' => true
-            ]
-        ];
+        ]];
+
         $services = [];
-        foreach ($this->getUniqueServiceCountList() as $serviceList) {
+        foreach ($this->getServiceList() as $serviceList) {
             $services[] = [
-                        'id' => $serviceList['id'],
-                        'name' => $serviceList['name'],
-                        'cnt' => $serviceList['cnt'],
-                        'is_active' => false
-                       ];
-            }
+                'id' => $serviceList['id'],
+                'name' => $serviceList['name'],
+                'cnt' => $serviceList['cnt'],
+                'is_active' => false
+            ];
+        }
+
         return array_merge($all, $services);
-    }
-
-    /**
-     * @return array
-     * @throws \yii\db\Exception
-     */
-    public function getServicesTotalCount()
-    {
-        $result = self::find()
-            ->select(['service_id', 'COUNT(*) as cnt'])
-            ->groupBy('service_id')
-            ->createCommand()
-            ->queryAll();
-
-        $result = ArrayHelper::map($result, 'service_id', 'cnt');
-
-        return ArrayHelper::getValue($result,$this->service_id);
     }
 
     /**
@@ -124,7 +103,6 @@ class Orders extends ActiveRecord
     }
 
     /**
-     * @param $id
      * @return string
      */
     public function getModeName(): string
@@ -135,7 +113,7 @@ class Orders extends ActiveRecord
     /**
      * @return array
      */
-    public function getStatusLabel(): array
+    public static function getStatusLabel(): array
     {
         return [
             self::STATUS_ALL_ORDERS => Yii::t('app','All orders'),
@@ -148,16 +126,14 @@ class Orders extends ActiveRecord
     }
 
     /**
-     * @param $id
      * @return string
      */
     public function getStatusName(): string
     {
-        return Yii::t('app', ArrayHelper::getValue(self::getStatusLabel(), $this->status));
+        return Yii::t('app', ArrayHelper::getValue($this->statusLabel, $this->status));
     }
 
     /**
-     * @param $date
      * @return string
      * @throws \yii\base\InvalidConfigException
      */
@@ -167,7 +143,6 @@ class Orders extends ActiveRecord
     }
 
     /**
-     * @param $date
      * @return string
      * @throws \yii\base\InvalidConfigException
      */
